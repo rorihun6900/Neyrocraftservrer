@@ -6,6 +6,9 @@ description: NeyroCraft hub with mode portals and NeyroAuth, the "enter the simu
 author: NeyroCraft
 softdepend: [BentoBox, GrimAC]
 commands:
+  neyrochat:
+    description: Каналы чата NeyroCraft
+    usage: /neyrochat [канал]
   hub:
     description: Return to the NeyroCraft hub
     aliases: [lobby, spawn]

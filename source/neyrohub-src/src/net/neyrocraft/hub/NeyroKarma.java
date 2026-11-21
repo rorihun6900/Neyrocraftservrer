@@ -150,7 +150,7 @@ final class NeyroKarma implements Listener {
         applySide(p);
         if (reason == null) return;
         boolean toDark = delta < 0;
-        p.sendActionBar(Component.text()
+        HudBoard.notice(p, Component.text()
                 .append(Component.text(toDark ? "◄ Тьма " : "► Свет ", TextColor.color(toDark ? DARK_RGB : LIGHT_RGB)).decorate(TextDecoration.BOLD))
                 .append(Component.text((delta > 0 ? "+" : "") + delta + " · " + reason + " · карма " + signed(after), NamedTextColor.GRAY))
                 .build());
@@ -262,7 +262,7 @@ final class NeyroKarma implements Listener {
             return;
         }
         if (attackedFirst(victim, killer)) {
-            killer.sendActionBar(Component.text("Самооборона — карма не изменилась", NamedTextColor.GRAY));
+            HudBoard.notice(killer, Component.text("Самооборона — карма не изменилась", NamedTextColor.GRAY));
             return;
         }
         add(killer, vk >= LIGHT ? -35 : -25, "убийство игрока");

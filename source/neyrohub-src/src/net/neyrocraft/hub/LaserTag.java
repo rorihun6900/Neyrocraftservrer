@@ -859,7 +859,7 @@ final class LaserTag implements Listener {
         if (s != null) {
             s.training++;
             shooter.playSound(Sound.sound(Key.key("minecraft", "entity.experience_orb.pickup"), Sound.Source.PLAYER, 0.8f, 1.4f));
-            shooter.sendActionBar(Component.text("Дрон сбит! Тренировка: " + s.training, NamedTextColor.GOLD));
+            HudBoard.notice(shooter, Component.text("Дрон сбит! Тренировка: " + s.training, NamedTextColor.GOLD));
         }
     }
 
@@ -1032,7 +1032,7 @@ final class LaserTag implements Listener {
     private void hud(LP lp) {
         Player p = lp.player;
         if (!lp.alive()) {
-            p.sendActionBar(Component.text("Возрождение через " + (lp.respawnIn / 20 + 1) + "...", NamedTextColor.GRAY));
+            HudBoard.notice(p, Component.text("Возрождение через " + (lp.respawnIn / 20 + 1) + "...", NamedTextColor.GRAY));
             return;
         }
         long now = System.currentTimeMillis();
@@ -1050,7 +1050,7 @@ final class LaserTag implements Listener {
         if (hot) b.append(Component.text(" ПЕРЕГРЕВ", NamedTextColor.RED).decorate(TextDecoration.BOLD));
         b.append(Component.text("   ⚔ " + lp.kills + " / ☠ " + lp.deaths, NamedTextColor.WHITE));
         if (lp.protectedFor > 0) b.append(Component.text("   🛡", NamedTextColor.AQUA));
-        p.sendActionBar(b.build());
+        HudBoard.notice(p, b.build());
     }
 
     private void updateSidebar() {

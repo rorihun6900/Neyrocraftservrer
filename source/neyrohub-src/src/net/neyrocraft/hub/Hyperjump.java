@@ -207,7 +207,7 @@ final class Hyperjump {
             for (Entity e : s.extra) if (e.isValid()) e.remove();
             if (s.tunnelCam != null && s.tunnelCam.isValid()) s.tunnelCam.remove();
             p.removePotionEffect(PotionEffectType.SPEED);
-            p.sendActionBar(Component.empty());
+            HudBoard.notice(p, Component.empty());
             plugin.arrivalAfterJump(p, mode);
             return;
         }
@@ -339,7 +339,7 @@ final class Hyperjump {
             bar.append(Component.text("▰", i < pct * 14 / 100 ? TextColor.color(NeyroHub.ORANGE) : TextColor.color(0x3C3C3C)));
         bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE))
                 .append(Component.text("   [Shift — пропустить]", NamedTextColor.DARK_GRAY));
-        p.sendActionBar(bar.build());
+        HudBoard.notice(p, bar.build());
 
         if (t % 12 == 0) sound(p, "entity.elytra.flying", (float) (0.08 + 0.08 * speed), (float) (0.6 + speed * 0.3));
         if (t == 30) sound(p, "block.beacon.ambient", 1f, 1.5f);
@@ -360,7 +360,7 @@ final class Hyperjump {
         if (s.gate != null && s.gate.isValid()) s.gate.remove();
         s.flash = whitePanel(s, start.clone().add(start.getDirection().multiply(0.3)), 255);
         p.removePotionEffect(PotionEffectType.SPEED);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
     }
 
     private void deck(Session s, int t) {
@@ -487,7 +487,7 @@ final class Hyperjump {
                 .append(Component.text(p.getName(), TextColor.color(NeyroHub.ORANGE)))
                 .append(Component.text(" прибыл на палубу", NamedTextColor.GRAY))
                 .build();
-        for (Player other : hub.getPlayers()) if (!other.equals(p)) other.sendActionBar(note);
+        for (Player other : hub.getPlayers()) if (!other.equals(p)) HudBoard.notice(other, note);
     }
 
     void skip(Player p) {
@@ -511,7 +511,7 @@ final class Hyperjump {
         if (!restore) return;
         p.teleport(new Location(hub, 0.5, floorY + 1, 0.5, 180f, 0f));
         p.setGameMode(s.mode);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
     }
 
     void stopAll() {

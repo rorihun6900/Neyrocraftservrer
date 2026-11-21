@@ -379,7 +379,7 @@ final class AnimusLoader {
             bar.append(Component.text("▮", i < pct / 5 ? NamedTextColor.WHITE : NamedTextColor.DARK_GRAY));
         bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE))
                 .append(Component.text("   [Shift — пропустить]", NamedTextColor.DARK_GRAY));
-        p.sendActionBar(bar.build());
+        HudBoard.notice(p, bar.build());
 
         // the rendering wave
         if (t >= WAVE_START) {
@@ -468,7 +468,7 @@ final class AnimusLoader {
                 .append(Component.text(p.getName(), TextColor.color(NeyroHub.ORANGE)))
                 .append(Component.text(" синхронизировался с палубой", NamedTextColor.GRAY))
                 .build();
-        for (Player other : hub.getPlayers()) if (!other.equals(p)) other.sendActionBar(note);
+        for (Player other : hub.getPlayers()) if (!other.equals(p)) HudBoard.notice(other, note);
     }
 
     /** Skip (Shift): render everything at once. */
@@ -499,7 +499,7 @@ final class AnimusLoader {
         p.sendMultiBlockChange(all);
         for (Entity e : s.hidden) if (e.isValid()) p.showEntity(plugin, e);
         for (Player o : s.hiddenPlayers) if (o.isOnline()) p.showPlayer(plugin, o);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
         if (p.getGameMode() != GameMode.CREATIVE) p.setGameMode(s.mode);
     }
 

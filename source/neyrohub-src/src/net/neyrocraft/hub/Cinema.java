@@ -437,14 +437,14 @@ final class Cinema implements Listener {
         long k = key(b);
         ItemDisplay taken = seats.get(k);
         if (taken != null && taken.isValid() && !taken.getPassengers().isEmpty()) {
-            p.sendActionBar(Component.text("Это кресло уже занято", NamedTextColor.GRAY));
+            HudBoard.notice(p, Component.text("Это кресло уже занято", NamedTextColor.GRAY));
             return;
         }
         ItemDisplay seat = w.spawn(new Location(w, b.getX() + 0.5, b.getY() + 0.42, b.getZ() + 0.5, 180f, 0f), ItemDisplay.class, plugin::prepare);
         seat.addPassenger(p);
         seats.put(k, seat);
         sitting.put(p.getUniqueId(), k);
-        p.sendActionBar(Component.text("🍿 Приятного просмотра!  Shift — встать", TextColor.color(0xE07BFF)));
+        HudBoard.notice(p, Component.text("🍿 Приятного просмотра!  Shift — встать", TextColor.color(0xE07BFF)));
         p.playSound(Sound.sound(Key.key("minecraft", "block.wool.place"), Sound.Source.PLAYER, 0.6f, 0.9f));
     }
 

@@ -171,7 +171,7 @@ final class WarpTunnel implements Listener {
         if (t == 24) sound(p, "block.beacon.power_select", 0.9f, 1.4f);
         if (t == 30) sound(p, "item.trident.riptide_3", 0.8f, 0.8f);
         int pct = (int) Math.round(k * 100);
-        p.sendActionBar(hud("ВАРП-ДВИГАТЕЛЬ · ЗАРЯД  ", s.style, pct, false));
+        HudBoard.notice(p, hud("ВАРП-ДВИГАТЕЛЬ · ЗАРЯД  ", s.style, pct, false));
     }
 
     private static void flash(Session s) {
@@ -328,7 +328,7 @@ final class WarpTunnel implements Listener {
 
         // HUD
         int pct = Math.min(100, dt * 100 / (FULL - JUMP));
-        p.sendActionBar(hud(t < GATE ? "ВАРП  " : "ВЫХОД ИЗ ВАРПА  ", st, pct, true));
+        HudBoard.notice(p, hud(t < GATE ? "ВАРП  " : "ВЫХОД ИЗ ВАРПА  ", st, pct, true));
     }
 
     private static TextComponent hud(String phase, Style st, int pct, boolean skip) {
@@ -357,7 +357,7 @@ final class WarpTunnel implements Listener {
         s.cube = Hyperjump.flashCube(plugin, p, p.getEyeLocation(), Material.WHITE_STAINED_GLASS);
         s.temp.add(s.cube);
         p.showTitle(s.style.arrival());
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
         sound(p, "block.beacon.power_select", 0.8f, 1.3f);
         sound(p, "block.amethyst_cluster.break", 1f, 1.1f);
     }

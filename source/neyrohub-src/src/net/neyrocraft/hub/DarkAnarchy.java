@@ -214,7 +214,7 @@ final class DarkAnarchy implements Listener {
                     return;
                 }
                 tryCross(player, pass);
-                player.sendActionBar(Component.text("Врата открыты на минуту · войди в алый проход", NamedTextColor.RED));
+                HudBoard.notice(player, Component.text("Врата открыты на минуту · войди в алый проход", NamedTextColor.RED));
                 cancel();
             }
         };
@@ -550,7 +550,7 @@ final class DarkAnarchy implements Listener {
                 || !crossings.containsKey(player.getUniqueId())) return;
         if (player.getWorld().equals(deadRealm)) return;
         cancelCrossing(player, true);
-        player.sendActionBar(Component.text("Разлом прерван · попробуй войти снова", NamedTextColor.RED));
+        HudBoard.notice(player, Component.text("Разлом прерван · попробуй войти снова", NamedTextColor.RED));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

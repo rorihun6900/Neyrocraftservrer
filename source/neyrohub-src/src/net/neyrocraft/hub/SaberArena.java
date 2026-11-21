@@ -273,7 +273,7 @@ final class SaberArena implements Listener {
                         .tooltip(Component.text("Открывается в StarPass на уровне " + passLevel + " — /pass"))
                         .width(120)
                         .action(DialogAction.customClick((view, audience) -> Bukkit.getScheduler().runTask(plugin, () ->
-                                p.sendActionBar(Component.text("Этот цвет — награда StarPass, уровень " + passLevel, NamedTextColor.GRAY))), once)).build());
+                                HudBoard.notice(p, Component.text("Этот цвет — награда StarPass, уровень " + passLevel, NamedTextColor.GRAY))), once)).build());
                 continue;
             }
             buttons.add(ActionButton.builder(Component.text("█ " + COLOR_NAME[i], TextColor.color(COLOR_RGB[i])))
@@ -281,7 +281,7 @@ final class SaberArena implements Listener {
                     .action(DialogAction.customClick((view, audience) -> Bukkit.getScheduler().runTask(plugin, () -> {
                         p.getPersistentDataContainer().set(colorKey, PersistentDataType.STRING, COLOR_ID[c]);
                         if (inGame(p)) { p.getInventory().setItem(0, saber(p, 0)); p.getInventory().setHeldItemSlot(0); ignite(p); }
-                        p.sendActionBar(Component.text("Клинок: " + COLOR_NAME[c], TextColor.color(COLOR_RGB[c])));
+                        HudBoard.notice(p, Component.text("Клинок: " + COLOR_NAME[c], TextColor.color(COLOR_RGB[c])));
                     }), once)).build());
         }
         p.showDialog(Dialog.create(b -> b.empty()
@@ -564,7 +564,7 @@ final class SaberArena implements Listener {
             if (!p.getAllowFlight() && p.isOnGround() && p.getGameMode() == GameMode.ADVENTURE) p.setAllowFlight(true);
             if (tick % 10 == 0) {
                 long now = System.currentTimeMillis();
-                p.sendActionBar(Component.text()
+                HudBoard.notice(p, Component.text()
                         .append(Component.text("⚔ " + f.kills + "  ", NamedTextColor.WHITE))
                         .append(cd("✋", f.cdPush, now)).append(Component.text("  "))
                         .append(cd("⚡", f.cdBolt, now)).append(Component.text("  "))

@@ -468,7 +468,7 @@ final class StarFight implements Listener {
         Player p = s.p;
         if (p.getLocation().getY() < SY - 25) { p.teleport(deck()); p.setFallDistance(0); }
         if (s.launchIn % 20 == 0 && s.launchIn > 0)
-            p.sendActionBar(Component.text("Взлёт через " + s.launchIn / 20 + "…  (ПКМ истребителем — сразу)", TextColor.color(0x7FE8FF)));
+            HudBoard.notice(p, Component.text("Взлёт через " + s.launchIn / 20 + "…  (ПКМ истребителем — сразу)", TextColor.color(0x7FE8FF)));
         if (--s.launchIn <= 0) { s.launchIn = -1; launchFromDeck(s); }
     }
 
@@ -615,7 +615,7 @@ final class StarFight implements Listener {
         double hit = 18 + s.speed * 18;
         s.speed = 0.4;
         damage(s, null, hit, true);
-        if (s.p != null && s.alive) s.p.sendActionBar(Component.text("💥 Столкновение!", NamedTextColor.RED));
+        if (s.p != null && s.alive) HudBoard.notice(s.p, Component.text("💥 Столкновение!", NamedTextColor.RED));
     }
 
     // ------------------------------------------------------------ pirates
@@ -865,7 +865,7 @@ final class StarFight implements Listener {
                 .append(Component.text("  КОРПУС ", NamedTextColor.GRAY)).append(Component.text(bar(s.hull, 100, 8), TextColor.color(s.hull < 30 ? 0xFF4040 : 0x9CFF6B)))
                 .append(Component.text("  ПУШКИ ", NamedTextColor.GRAY)).append(Component.text(bar(100 - s.heat, 100, 5), TextColor.color(s.heat > 75 ? 0xFF7A30 : 0xFFD54A)))
                 .append(Component.text("  ФОРСАЖ ", NamedTextColor.GRAY)).append(Component.text(bar(s.energy, 100, 5), TextColor.color(0xFFB060)));
-        p.sendActionBar(ab.build());
+        HudBoard.notice(p, ab.build());
         long left = Math.max(0, MATCH_MS - (System.currentTimeMillis() - matchStart)) / 1000;
         s.bar.name(Component.text()
                 .append(Component.text("Сбито: " + s.kills + "/" + WIN_KILLS, TextColor.color(0xFFD54A)).decorate(TextDecoration.BOLD))

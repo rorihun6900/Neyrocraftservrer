@@ -179,7 +179,7 @@ final class BeamDrop implements Listener {
             for (int i = 0; i < 10; i++) bar.append(Component.text("▰", i < pct / 10 ? TextColor.color(s.style.a()) : TextColor.color(0x3C3C3C)));
             bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE))
                     .append(Component.text("   [Shift — пропустить]", NamedTextColor.DARK_GRAY));
-            p.sendActionBar(bar.build());
+            HudBoard.notice(p, bar.build());
             return;
         }
         stop(p, true);
@@ -200,7 +200,7 @@ final class BeamDrop implements Listener {
         to.setPitch(Math.min(20f, look.getPitch()));
         p.teleport(to);
         p.setFallDistance(0);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
         if (effects) landingEffects(p, s.style, to);
         if (s.onLand != null) s.onLand.accept(p);
     }

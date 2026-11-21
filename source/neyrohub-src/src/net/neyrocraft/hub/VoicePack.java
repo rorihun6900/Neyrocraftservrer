@@ -106,6 +106,11 @@ final class VoicePack {
             } catch (IOException ex) {
                 plugin.getLogger().warning("Temple soundtrack unavailable: " + ex.getMessage());
             }
+            try {
+                base = addHudTextures(base);
+            } catch (IOException ex) {
+                plugin.getLogger().warning("HUD textures unavailable: " + ex.getMessage());
+            }
             packs.put("base", new Pack(base, sha1(base)));
             try {
                 packs.put("dark-ui", darkUi(base));
@@ -237,6 +242,34 @@ final class VoicePack {
         ZipEntry entry = new ZipEntry(name);
         entry.setTime(0L);
         zip.putNextEntry(entry);
+    }
+
+    private byte[] addHudTextures(byte[] base) throws IOException {
+        Map<String, byte[]> textures = new LinkedHashMap<>();
+        for (String name : List.of("hotbar", "hotbar_selection", "hotbar_offhand_left", "hotbar_offhand_right",
+                "experience_bar_background", "experience_bar_progress", "locator_bar_background")) {
+            try (InputStream resource = plugin.getResource("voice/hud/" + name + ".png")) {
+                if (resource == null) throw new IOException("Missing HUD sprite: " + name);
+                textures.put("assets/minecraft/textures/gui/sprites/hud/" + name + ".png", resource.readAllBytes());
+            }
+        }
+        ByteArrayOutputStream output = new ByteArrayOutputStream(base.length);
+        try (ZipInputStream input = new ZipInputStream(new ByteArrayInputStream(base));
+             ZipOutputStream zip = new ZipOutputStream(output)) {
+            ZipEntry entry;
+            while ((entry = input.getNextEntry()) != null) {
+                if (textures.containsKey(entry.getName())) continue;
+                putTemplePackEntry(zip, entry.getName());
+                input.transferTo(zip);
+                zip.closeEntry();
+            }
+            for (var texture : textures.entrySet()) {
+                putTemplePackEntry(zip, texture.getKey());
+                zip.write(texture.getValue());
+                zip.closeEntry();
+            }
+        }
+        return output.toByteArray();
     }
 
     private static Pack darkUi(byte[] base) throws IOException {
@@ -391,7 +424,7 @@ final class VoicePack {
                 .packs(info)
                 .required(false)
                 .replace(false)
-                .prompt(Component.text("Голоса Саманты и Ами, музыка и световые мечи NeyroCraft (1,4 МБ)", TextColor.color(0xFF8A1E)))
+                .prompt(Component.text("Интерфейс, голоса Саманты и Ами, музыка и модели NeyroCraft", TextColor.color(0xFF8A1E)))
                 .callback((pid, status, audience) -> {
                     if (status == ResourcePackStatus.SUCCESSFULLY_LOADED) loadedKey.put(p.getUniqueId(), key);
                     else if (!status.intermediate()) loadedKey.remove(p.getUniqueId());

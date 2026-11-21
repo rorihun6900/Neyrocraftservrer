@@ -204,7 +204,7 @@ final class NeyroClasses implements Listener {
         }
         player.getWorld().spawnParticle(Particle.END_ROD, player.getLocation().add(0, 1, 0), 22, .5, .6, .5, .025);
         player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1f, 1.2f);
-        player.sendActionBar(text("✧ Исцеление Консула", Role.CONSULAR.color));
+        HudBoard.notice(player, text("✧ Исцеление Консула", Role.CONSULAR.color));
     }
 
     private static ItemStack item(Material material, Component name, List<Component> lore, boolean selected) {

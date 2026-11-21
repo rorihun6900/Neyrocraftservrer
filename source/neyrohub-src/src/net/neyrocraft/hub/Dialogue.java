@@ -176,7 +176,7 @@ final class Dialogue implements Listener {
         if (talking(p)) return null;
         VoicePack vp = plugin.voice();
         if (vp != null && vp.busy(p)) {
-            p.sendActionBar(Component.text(speaker.name() + " ждёт, пока Саманта договорит…", TextColor.color(speaker.color())));
+            HudBoard.notice(p, Component.text(speaker.name() + " ждёт, пока Саманта договорит…", TextColor.color(speaker.color())));
             return null;
         }
         Session s = new Session(p, speaker, focus.clone());
@@ -312,7 +312,7 @@ final class Dialogue implements Listener {
         s.hovered = -1;
         s.hover = Bukkit.getScheduler().runTaskTimer(plugin, () -> hover(s), 1L, 2L);
         p.playSound(Sound.sound(Key.key("minecraft", "block.note_block.chime"), Sound.Source.MASTER, 0.4f, 1.6f));
-        p.sendActionBar(Component.text()
+        HudBoard.notice(p, Component.text()
                 .append(Component.text("Ответ: 1–" + s.options.size() + " или взгляд + ПКМ · ", NamedTextColor.GRAY))
                 .append(Component.text("◆ Свет", TextColor.color(Kind.LIGHT.color)))
                 .append(Component.text(" · ", NamedTextColor.DARK_GRAY))

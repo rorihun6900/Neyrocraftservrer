@@ -473,7 +473,7 @@ final class PlanetRace implements Listener {
         if (!p.isOnline() || !in(p)) return;
         p.teleport(plaza());
         plazaItems(p);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
     }
 
     // ------------------------------------------------------------ the tick
@@ -697,7 +697,7 @@ final class PlanetRace implements Listener {
         }
         // too long off the track: back onto it
         if (!onRoad) r.offTicks++; else r.offTicks = 0;
-        if (r.offTicks == 80) p.sendActionBar(Component.text("Вне трассы! Вернись или нажми F", NamedTextColor.RED));
+        if (r.offTicks == 80) HudBoard.notice(p, Component.text("Вне трассы! Вернись или нажми F", NamedTextColor.RED));
         if (r.offTicks > 160) reset(r, "Слишком долго вне трассы");
     }
 
@@ -761,7 +761,7 @@ final class PlanetRace implements Listener {
         r.p.setRotation(r.yaw, 5);
         world.spawnParticle(Particle.REVERSE_PORTAL, eye, 60, 0.6, 0.6, 0.6, 0.05);
         sound(r.p, "entity.enderman.teleport", 0.6f, 1.3f);
-        if (why != null) r.p.sendActionBar(Component.text("⟲ " + why + " — снова на трассе", TextColor.color(CYAN)));
+        if (why != null) HudBoard.notice(r.p, Component.text("⟲ " + why + " — снова на трассе", TextColor.color(CYAN)));
     }
 
     private void finish(Racer r, long total) {
@@ -848,7 +848,7 @@ final class PlanetRace implements Listener {
                 .append(Component.text("УСКОРИТЕЛЬ ", TextColor.color(r.boosting ? 0xFF7A20 : CYAN)));
         int cells = 10, full = (int) Math.round(r.energy / 100 * cells);
         for (int i = 0; i < cells; i++) ab.append(Component.text("▮", i < full ? TextColor.color(r.boosting ? 0xFF7A20 : CYAN) : TextColor.color(0x333333)));
-        if (r.offTicks < 80) p.sendActionBar(ab.build());
+        if (r.offTicks < 80) HudBoard.notice(p, ab.build());
     }
 
     private static Component lightsText(int lit, boolean go) {

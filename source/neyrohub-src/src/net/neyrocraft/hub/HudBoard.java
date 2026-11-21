@@ -56,6 +56,7 @@ final class HudBoard implements Listener {
     private final File dir;
     private final Map<UUID, YamlConfiguration> stats = new HashMap<>();
     private final Map<UUID, Scoreboard> boards = new HashMap<>();
+    private static final Map<UUID, Long> noticeUntil = new java.util.concurrent.ConcurrentHashMap<>();
     private final NamespacedKey titleKey = new NamespacedKey("starpass", "title");
     private final NamespacedKey rankKey = new NamespacedKey("neyroranks", "prefix");
     private long tick;
@@ -72,6 +73,7 @@ final class HudBoard implements Listener {
     }
 
     void shutdown() {
+        noticeUntil.clear();
         saveAll();
         for (Player p : Bukkit.getOnlinePlayers())
             if (boards.containsKey(p.getUniqueId()) && p.getScoreboard() == boards.get(p.getUniqueId()))
@@ -110,6 +112,7 @@ final class HudBoard implements Listener {
         save(id);
         stats.remove(id);
         boards.remove(id);
+        noticeUntil.remove(id);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -175,10 +178,36 @@ final class HudBoard implements Listener {
                         : java.util.Set.of());
                 render(p, mine, m);
                 if (cur != mine) p.setScoreboard(mine);
+                renderPortrait(p, m);
             } catch (RuntimeException ex) {
                 plugin.getLogger().warning("HUD for " + p.getName() + ": " + ex);
             }
         }
+    }
+
+    /** Gameplay and dialogue hints temporarily take priority over the profile strip. */
+    static void notice(Player player, Component message) {
+        noticeUntil.put(player.getUniqueId(), System.nanoTime() + 3_000_000_000L);
+        player.sendActionBar(message);
+    }
+
+    private static Component portrait(Player player) {
+        var profile = player.getPlayerProfile();
+        var head = profile.hasTextures()
+                ? net.kyori.adventure.text.object.ObjectContents.playerHead(profile)
+                : net.kyori.adventure.text.object.ObjectContents.playerHead(player.getName());
+        return Component.object(head);
+    }
+
+    private void renderPortrait(Player player, Mode mode) {
+        if (mode == Mode.RETRO || mode == Mode.RACE || mode == Mode.CINEMA || mode == Mode.OTHER) return;
+        if (plugin.inCutscene(player) || plugin.dialogue().talking(player)
+                || player.isDead() || player.getOpenInventory().getTopInventory().getType() != org.bukkit.event.inventory.InventoryType.CRAFTING
+                || noticeUntil.getOrDefault(player.getUniqueId(), 0L) > System.nanoTime()) return;
+        int accent = mode == Mode.ANARCHY || mode == Mode.HUB3 ? 0xE64B65 : CYAN;
+        player.sendActionBar(t("⟪ ", accent).append(portrait(player))
+                .append(t("  ·  УР. " + player.getLevel() + " ", GOLD))
+                .append(t("⟫", accent)));
     }
 
 
@@ -273,25 +302,30 @@ final class HudBoard implements Listener {
     }
 
     private List<Component> lines(Player p, Mode m) {
+        Component rank = null;
+        String rj = p.getPersistentDataContainer().get(rankKey, PersistentDataType.STRING);
+        if (rj != null) try { rank = GsonComponentSerializer.gson().deserialize(rj); } catch (RuntimeException ignored) { }
+        if (rank == null) rank = t(p.isOp() ? "Администратор" : "Игрок", p.isOp() ? ORANGE : DIM);
+        int nextXp = Math.max(1, p.getExpToLevel());
+        int experience = Math.round(p.getExp() * nextXp);
+        Component name = portrait(p).append(t("  " + p.getName(), m == Mode.ANARCHY ? 0xFF6060 : 0xFFFFFF)
+                .decorate(TextDecoration.BOLD));
+        Component xp = kv("Ур. " + p.getLevel() + " · XP", experience + "/" + nextXp, GOLD);
         if (m == Mode.ANARCHY) {
             long kills = get(p, "anarchy.pvp");
             long mobs = get(p, "anarchy.mobs");
             EvilPass pass = plugin.evilPass();
-            return List.of(activity(p, 0xFF6060), t(" ▸ " + p.getName(), 0xFF6060), classLine(p), t(m.title, 0xFF3030),
+            return List.of(name, rank, xp, activity(p, 0xFF6060), classLine(p), t(m.title, 0xFF3030),
                     t(" Evil-Pass · ур. " + pass.level(p), 0xFF3030),
                     t(" До уровня: " + pass.untilNextLevel(p) + " XP", 0xFF9999),
                     t(" PvP: " + kills + " · Мобы: " + mobs, 0xFF9999),
                     t(" Награды · /evilpass", 0xFF7070));
         }
         List<Component> l = new ArrayList<>();
+        l.add(name);
+        l.add(rank);
+        l.add(xp);
         l.add(activity(p, m == Mode.HUB3 ? 0xFF6060 : CYAN));
-        // the player
-        // rank prefix from NeyroRanks (e.g. ⟦★ Директор⟧), then the name
-        Component rank = null;
-        String rj = p.getPersistentDataContainer().get(rankKey, PersistentDataType.STRING);
-        if (rj != null) try { rank = GsonComponentSerializer.gson().deserialize(rj); } catch (RuntimeException ignored) { }
-        if (rank != null) l.add(Component.text().append(t(" ", DIM)).append(rank).build());
-        l.add(Component.text().append(t(" ▸ ", ORANGE)).append(Component.text(p.getName(), NamedTextColor.WHITE).decorate(TextDecoration.BOLD)).build());
         Component title = null;
         String json = p.getPersistentDataContainer().get(titleKey, PersistentDataType.STRING);
         if (json != null) try { title = GsonComponentSerializer.gson().deserialize(json); } catch (RuntimeException ignored) { }
@@ -316,7 +350,6 @@ final class HudBoard implements Listener {
             bar.append(t(" " + NeyroKarma.signed(k), NeyroKarma.color(k)).decorate(TextDecoration.BOLD));
             l.add(bar.build());
         }
-        l.add(Component.empty());
         String worldLabel = m == Mode.SURVIVAL ? "Мир выживания" : m == Mode.OTHER ? p.getWorld().getName() : m.title;
         l.add(t(" " + worldLabel, m == Mode.HUB3 ? 0xFF6060 : ORANGE).decorate(TextDecoration.BOLD));
         if (m == Mode.SURVIVAL) l.add(classLine(p));

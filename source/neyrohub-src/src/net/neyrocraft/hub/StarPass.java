@@ -198,7 +198,7 @@ final class StarPass implements Listener {
         int before = levelOf(x.stars);
         x.stars += amount;
         int after = levelOf(x.stars);
-        p.sendActionBar(Component.text()
+        HudBoard.notice(p, Component.text()
                 .append(Component.text("+" + amount + " ★ ", TextColor.color(0xFFE08A)).decorate(TextDecoration.BOLD))
                 .append(brand(-1)).append(Component.text("  · " + reason, NamedTextColor.GRAY)).build());
         p.playSound(Sound.sound(Key.key("minecraft", "entity.experience_orb.pickup"), Sound.Source.MASTER, 0.5f, 1.6f));

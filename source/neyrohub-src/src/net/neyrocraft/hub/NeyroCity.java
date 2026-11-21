@@ -917,9 +917,9 @@ final class NeyroCity implements Listener {
         boolean in = safe(p.getLocation());
         UUID id = p.getUniqueId();
         if (in && inZone.add(id)) {
-            if (!plugin.beamDrop().busy(p)) p.sendActionBar(Component.text("✔ Безопасная зона NEYRO-CITY: PvP выключен, мобов нет", TextColor.color(0x7CFF4F)));
+            if (!plugin.beamDrop().busy(p)) HudBoard.notice(p, Component.text("✔ Безопасная зона NEYRO-CITY: PvP выключен, мобов нет", TextColor.color(0x7CFF4F)));
         } else if (!in && inZone.remove(id)) {
-            p.sendActionBar(Component.text("⚠ Опасная зона · строй за отметкой 500 блоков от спавна", TextColor.color(0xFF5555)));
+            HudBoard.notice(p, Component.text("⚠ Опасная зона · строй за отметкой 500 блоков от спавна", TextColor.color(0xFF5555)));
             p.showTitle(net.kyori.adventure.title.Title.title(Component.text("⚠ ОПАСНАЯ ЗОНА ⚠", NamedTextColor.RED), Component.text("Ты покинул NEYRO-CITY", NamedTextColor.YELLOW)));
             if (plugin.voice() != null && plugin.voice().hasVoice(p))
                 p.playSound(Sound.sound(Key.key("neyrocraft", "sam_city_warning"), Sound.Source.VOICE, 1f, 1f), Sound.Emitter.self());
@@ -948,7 +948,7 @@ final class NeyroCity implements Listener {
         if (!on) {
             onPad.remove(id);
             if (dx * dx + dz * dz < 25 && dy > -0.5 && dy < 3 && tick % 20 == 0 && !plugin.beamDrop().busy(p))
-                p.sendActionBar(Component.text("▲ Встань в луч — лифт на корабль NEYRO-1", TextColor.color(CYAN)));
+                HudBoard.notice(p, Component.text("▲ Встань в луч — лифт на корабль NEYRO-1", TextColor.color(CYAN)));
             return;
         }
         if (!onPad.add(id)) return;                         // only when stepping into the beam
@@ -1459,7 +1459,7 @@ final class NeyroCity implements Listener {
         if (p != null && tick % 2 == 0) {
             int remaining = Math.max(0, (int) Math.floor(SPAWN_PROTECTION - spawnDistance(p.getLocation())) + 1);
             String hint = remaining > 0 ? " · отойди ещё примерно на " + remaining + " бл. от спавна" : "";
-            p.sendActionBar(Component.text("✖ Строй и ломай дальше 500 блоков от спавна" + hint, TextColor.color(0xFF5555)));
+            HudBoard.notice(p, Component.text("✖ Строй и ломай дальше 500 блоков от спавна" + hint, TextColor.color(0xFF5555)));
         }
     }
 
@@ -1633,7 +1633,7 @@ final class NeyroCity implements Listener {
             @Override
             public void run() {
                 if (!p.isOnline() || !p.getWorld().equals(from.getWorld()) || p.getLocation().distanceSquared(from) > 1.0) {
-                    if (p.isOnline()) p.sendActionBar(Component.text("✖ Телепорт отменён: ты сдвинулся", NamedTextColor.RED));
+                    if (p.isOnline()) HudBoard.notice(p, Component.text("✖ Телепорт отменён: ты сдвинулся", NamedTextColor.RED));
                     warmups.remove(p.getUniqueId());
                     cancel();
                     return;
@@ -1644,7 +1644,7 @@ final class NeyroCity implements Listener {
                     teleportToCity(p);
                     return;
                 }
-                p.sendActionBar(Component.text("Телепорт в город: " + left + "...", TextColor.color(CYAN)));
+                HudBoard.notice(p, Component.text("Телепорт в город: " + left + "...", TextColor.color(CYAN)));
                 sound(p, "block.note_block.chime", 0.6f, 0.8f + (3 - left) * 0.3f);
                 left--;
             }

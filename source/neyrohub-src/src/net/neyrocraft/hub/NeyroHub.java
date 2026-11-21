@@ -1229,7 +1229,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
                         bar.append(Component.text("▰", i < pct / 10 ? TextColor.color(ORANGE) : TextColor.color(0x3C3C3C)));
                     bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE))
                             .append(Component.text("   [Shift — пропустить]", NamedTextColor.DARK_GRAY));
-                    p.sendActionBar(bar.build());
+                    HudBoard.notice(p, bar.build());
                     return;
                 }
                 // touchdown: effects, a short rest, then step off the platform
@@ -1415,7 +1415,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
                     bar.append(Component.text("▰", i < filled ? TextColor.color(ORANGE) : TextColor.color(0x3C3C3C)));
                 bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE))
                         .append(Component.text("   [Shift — пропустить]", NamedTextColor.DARK_GRAY));
-                p.sendActionBar(bar.build());
+                HudBoard.notice(p, bar.build());
 
                 // flash while diving through the core
                 if (!passedCore[0] && l.getY() < CORE_Y + 1) {
@@ -1459,7 +1459,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
         p.teleport(spawn());
         p.setGameMode(mode);
         p.setFallDistance(0);
-        p.sendActionBar(Component.empty());
+        HudBoard.notice(p, Component.empty());
         if (effects) landingEffects(p);
     }
 
@@ -1502,7 +1502,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
                 .append(Component.text(p.getName(), TextColor.color(ORANGE)))
                 .append(Component.text(" прибыл в хаб", NamedTextColor.GRAY))
                 .build();
-        for (Player other : hub.getPlayers()) if (!other.equals(p)) other.sendActionBar(note);
+        for (Player other : hub.getPlayers()) if (!other.equals(p)) HudBoard.notice(other, note);
     }
 
     /** Stops a running arrival; when {@code restore} is set the player is put back on the spawn point. */

@@ -275,7 +275,7 @@ final class RetroWorld implements Listener {
         ItemStack old = oldVersionOf(it);
         if (old == null) {
             e.setCancelled(true);
-            p.sendActionBar(Component.text("Этого предмета ещё нет в Minecraft 1.0", NamedTextColor.RED));
+            HudBoard.notice(p, Component.text("Этого предмета ещё нет в Minecraft 1.0", NamedTextColor.RED));
         } else if (old != it) {
             e.setCursor(old);
         }
@@ -318,7 +318,7 @@ final class RetroWorld implements Listener {
     public void onPlace(BlockPlaceEvent e) {
         if (!in(e.getBlock().getWorld()) || ITEMS.contains(e.getItemInHand().getType())) return;
         e.setCancelled(true);
-        e.getPlayer().sendActionBar(Component.text("Этого блока ещё нет в Minecraft 1.0", NamedTextColor.RED));
+        HudBoard.notice(e.getPlayer(), Component.text("Этого блока ещё нет в Minecraft 1.0", NamedTextColor.RED));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -346,7 +346,7 @@ final class RetroWorld implements Listener {
     public void onPortal(PlayerPortalEvent e) {
         if (!in(e.getFrom().getWorld())) return;
         e.setCancelled(true);
-        e.getPlayer().sendActionBar(Component.text("Незер и Энд мира 1.0 пока закрыты", NamedTextColor.RED));
+        HudBoard.notice(e.getPlayer(), Component.text("Незер и Энд мира 1.0 пока закрыты", NamedTextColor.RED));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -455,7 +455,7 @@ final class RetroWorld implements Listener {
                 else if (old != c[i]) { c[i] = old; changed = true; }
             }
             if (changed) p.getInventory().setContents(c);
-            if (removed) p.sendActionBar(Component.text("Предметы из нового майнкрафта убраны — в 1.0 их ещё нет", NamedTextColor.RED));
+            if (removed) HudBoard.notice(p, Component.text("Предметы из нового майнкрафта убраны — в 1.0 их ещё нет", NamedTextColor.RED));
         }
     }
 

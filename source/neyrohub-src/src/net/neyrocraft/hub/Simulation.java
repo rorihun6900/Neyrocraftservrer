@@ -694,7 +694,7 @@ final class Simulation implements Listener {
         s.status = "набери синхро-код на голоклавиатуре справа →";
         s.statusColor = 0xFFFF55;
         sound(s.player, "block.note_block.chime", 0.8f, 1.2f);
-        s.player.sendActionBar(Component.text("Повернись вправо и нажимай клавиши голоклавиатуры (ПКМ)", NamedTextColor.YELLOW));
+        HudBoard.notice(s.player, Component.text("Повернись вправо и нажимай клавиши голоклавиатуры (ПКМ)", NamedTextColor.YELLOW));
     }
 
     private void pressKey(Session s, char key) {
@@ -941,7 +941,7 @@ final class Simulation implements Listener {
         s.camera = cam;
         s.entities.add(cam);
         p.setGameMode(GameMode.SPECTATOR);
-        p.sendActionBar(Component.text("Ложимся в VR-капсулу...", NamedTextColor.GRAY));
+        HudBoard.notice(p, Component.text("Ложимся в VR-капсулу...", NamedTextColor.GRAY));
         // the keypad is no longer needed and would be in the way of the walk
         for (Entity en : s.entities) if (en instanceof Interaction && en.isValid()) en.remove();
         for (TextDisplay d : s.keyLabel.values()) if (d.isValid()) d.remove();
@@ -1062,7 +1062,7 @@ final class Simulation implements Listener {
         s.camera = cam;
         s.entities.add(cam);
         p.setGameMode(GameMode.SPECTATOR);
-        p.sendActionBar(Component.text("Ложимся в VR-капсулу...", NamedTextColor.GRAY));
+        HudBoard.notice(p, Component.text("Ложимся в VR-капсулу...", NamedTextColor.GRAY));
         sound(p, "item.armor.equip_elytra", 0.8f, 0.8f);
         final int duration = 46;
         final double[] p0 = {VX, LY + 1.62, VZ};
@@ -1095,7 +1095,7 @@ final class Simulation implements Listener {
                 for (int k = 0; k < 10; k++)
                     bar.append(Component.text("▰", k < pct / 10 ? TextColor.color(ORANGE) : TextColor.color(0x3C3C3C)));
                 bar.append(Component.text("  " + pct + "%", NamedTextColor.WHITE));
-                p.sendActionBar(bar.build());
+                HudBoard.notice(p, bar.build());
                 if (step % 10 == 0) sound(p, "entity.warden.heartbeat", 0.6f, 1.0f + step / 60f);
                 if (step % 3 == 0) world.spawnParticle(Particle.END_ROD,
                         new Location(world, CX, LY + CAP_H + 0.35, CZ), 2, 0.4, 0.05, 0.9, 0.0);
