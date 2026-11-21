@@ -1,0 +1,36 @@
+# NeyroSpell — chat spell check
+enabled: true
+# Spell checking service (Yandex Speller, free). Chat messages are sent there to be checked.
+service: "https://speller.yandex.net/services/spellservice.json/checkText"
+# How long to wait for the checker (ms); if it is slower the message goes through unchecked
+timeout-ms: 1500
+# Words never marked as mistakes (server slang, names)
+ignore-words:
+  - neyrocraft
+  - нейрокрафт
+  - майнкрафт
+  - minecraft
+  - скайблок
+  - skyblock
+  - лазертаг
+  - lasertag
+  - грим
+  - grim
+  - саманта
+  - хаб
+  - спавн
+  - пвп
+  - пве
+  - лол
+  - кек
+  - ок
+  - го
+  - гг
+  - имба
+  - нуб
+  - читер
+  - читы
+  - крипер
+  - эндер
+  - незер
+  - тп

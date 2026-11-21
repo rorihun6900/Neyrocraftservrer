@@ -1,0 +1,7 @@
+name: NeyroTab
+version: '1.0'
+main: net.neyrocraft.tab.NeyroTab
+api-version: '26.3'
+description: Animated tab list for NeyroCraft with ping and TPS, plus a welcome title.
+author: NeyroCraft
+softdepend: [AuthMe]

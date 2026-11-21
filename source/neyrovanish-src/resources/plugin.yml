@@ -1,0 +1,15 @@
+name: NeyroVanish
+version: 1.0
+main: net.neyrocraft.vanish.NeyroVanish
+api-version: '26.3'
+softdepend: [NeyroHub]
+commands:
+  vanish:
+    description: Скрыться от игроков или снова стать видимым
+    usage: /vanish
+    permission: neyrovanish.use
+permissions:
+  neyrovanish.use:
+    default: op
+  neyrovanish.see:
+    default: op

@@ -1,0 +1,14 @@
+name: NeyroPrivate
+version: '1.0'
+main: net.neyrocraft.privat.NeyroPrivate
+api-version: '26.3'
+description: Private regions for survival and Minecraft 1.0
+author: NeyroCraft
+commands:
+  rg:
+    description: Приваты — защита построек
+    aliases: [privat, приват, region, регион, рг]
+    usage: /rg help
+permissions:
+  neyroprivate.admin:
+    default: op

@@ -1,0 +1,23 @@
+# World where the survival portal leads
+survival-world: world
+# Address shown on the information board in the hub (leave empty to hide)
+server-address: neyrocraft.space
+
+auth:
+  # NeyroAuth: login as "entering the simulation". Turns itself off if AuthMe is installed.
+  enabled: true
+
+# The ship AI's real voice (a small resource pack served by the plugin itself)
+voice-pack:
+  enabled: true
+  # HTTP port of the pack server (forward this TCP port on the router so friends can download it)
+  port: 8165
+  # 0.0.0.0 = reachable from the internet (needs the port forwarded), 127.0.0.1 = this PC only
+  bind: 0.0.0.0
+  # URL other players download the pack from
+  public-url: "http://neyrocraft.space:8165/neyrocraft-voice.zip"
+  # players who play on this PC itself: they get the pack from 127.0.0.1 instead
+  # Blender (used to encode Samantha's recordings of player names to OGG)
+  blender: "c:\\games\\steam\\steamapps\\common\\Blender\\blender.exe"
+  local-players:
+    - RorinHunGames

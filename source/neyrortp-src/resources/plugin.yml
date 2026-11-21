@@ -1,0 +1,14 @@
+name: NeyroRTP
+version: '1.0'
+main: net.neyrocraft.rtp.NeyroRTP
+api-version: '26.3'
+description: Safe random teleport in NeyroCraft survival
+author: NeyroCraft
+commands:
+  rtp:
+    description: Teleport to random X/Z coordinates beyond the protected spawn
+    aliases: [randomtp, wild]
+    usage: /rtp [all|ник]
+permissions:
+  neyrortp.admin:
+    default: op

@@ -1,0 +1,158 @@
+name: NeyroHub
+version: '1.1'
+main: net.neyrocraft.hub.NeyroHub
+api-version: '26.3'
+description: NeyroCraft hub with mode portals and NeyroAuth, the "enter the simulation" login.
+author: NeyroCraft
+softdepend: [BentoBox, GrimAC]
+commands:
+  hub:
+    description: Return to the NeyroCraft hub
+    aliases: [lobby, spawn]
+    usage: /hub
+  pass:
+    description: Open StarPass, the season pass
+    aliases: [starpass, sp]
+    usage: /pass
+  sabers:
+    description: Energy-sword duels arena
+    aliases: [mechi, swords]
+    usage: /sabers
+  orion:
+    description: Fly to station Orion, the second hub
+    aliases: [hub2]
+    usage: /orion
+  hubinfo:
+    description: Путеводитель по мирам и мини-играм
+    usage: /hubinfo
+  hub3:
+    description: Open the red dark-side anarchy portal
+    usage: /hub3
+  anarchydrop:
+    description: Launch an air drop in Anarchy
+    usage: /anarchydrop
+    permission: neyrohub.admin
+  evilpass:
+    description: Open the Anarchy progression and reward menu
+    usage: /evilpass
+  classes:
+    description: Select your NeyroCraft class
+    aliases: [class, класс, классы]
+    usage: /classes [ability]
+  dark:
+    description: Confirm or cancel the dark-side transition
+    usage: /dark accept|cancel
+  space:
+    description: Space battles of starfighters
+    aliases: [boi, бои, starfight, космос]
+    usage: /space
+  kino:
+    description: Go to the space cinema
+    aliases: [cinema, кино, космокино]
+    usage: /kino
+  race:
+    description: Speeder races on planet Terrax
+    aliases: [gonki, speeder, terrax]
+    usage: /race
+  reboot:
+    description: Restart (or shut down) the server with Samantha announcing it
+    aliases: [perezapusk]
+    usage: /reboot [seconds] | off | cancel
+    permission: neyrohub.admin
+  neyrohub:
+    description: NeyroHub admin commands
+    usage: /neyrohub rebuild
+    permission: neyrohub.admin
+  city:
+    description: Go to Neyro-City, the safe cyberpunk city at the survival spawn
+    aliases: [gorod, town, город]
+    usage: /city
+  house:
+    description: NEYRO-CORP residences in Neyro-City
+    aliases: [houses]
+    usage: /house list | visit <1-4> | buy <1-4>
+  sethome:
+    description: Save a home in survival
+    usage: /sethome [name]
+  home:
+    description: Teleport to a saved home
+    usage: /home [name]
+  homes:
+    description: List saved homes
+    usage: /homes
+  delhome:
+    description: Delete a saved home
+    usage: /delhome [name]
+  money:
+    description: Show your NEYRO dollar balance
+    aliases: [balance, cash]
+    usage: /money
+  casino:
+    description: NEYRO-CASINO with in-game NEYRO dollars
+    usage: /casino [rules|100|500|1000]
+  job:
+    description: Choose a profession and earn NEYRO dollars
+    aliases: [jobs]
+    usage: /job miner | woodcutter | hunter
+  radio:
+    description: Neyro-Radio news and music in Neyro-City
+    aliases: [нейрорадио, радио]
+    usage: /radio [news]
+  neyrogear:
+    description: Creative-only NEYRO-CORP jetpack and admin saber
+    usage: /neyrogear jetpack | saber
+    permission: neyrohub.admin
+  char:
+    description: Character screen with the light/dark side (also Shift+F)
+    aliases: [character, perso, karma, персонаж, карма]
+    usage: /char
+  neyrocity:
+    description: Neyro-City admin commands
+    usage: /neyrocity rebuild | dump | info
+    permission: neyrohub.admin
+  login:
+    description: Log in with your password
+    aliases: [l, log]
+    usage: /login <key>
+  email:
+    description: Bind an email address
+    usage: /email <address>
+  emailcode:
+    description: Verify your email address
+    usage: /emailcode <code>
+  recover:
+    description: Send a password recovery code
+    usage: /recover
+  resetpass:
+    description: Reset your password using a recovery code
+    usage: /resetpass <code> <new> <new>
+  register:
+    description: Register with your password
+    aliases: [reg, regiser]
+    usage: /register <key> <key>
+  changepassword:
+    description: Change your access key
+    aliases: [cp]
+    usage: /changepassword <old> <new>
+  neyroauth:
+    description: NeyroAuth admin commands
+    usage: /neyroauth info | unregister <name> | setpassword <name> <key>
+    permission: neyrohub.admin
+  neyromail:
+    description: Test the NEYRO-CORP mail connection
+    usage: /neyromail test <email>
+    permission: neyrohub.admin
+  neyroguard:
+    description: NeyroGuard anticheat (alerts, player record)
+    aliases: [ng, anticheat]
+    usage: /ng check <player> | /ng alerts
+    permission: neyroguard.admin
+permissions:
+  neyrohub.admin:
+    default: op
+  neyroguard.admin:
+    default: op
+  neyroguard.alerts:
+    default: op
+  neyrocity.resident:
+    default: false

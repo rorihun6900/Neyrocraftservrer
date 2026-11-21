@@ -1,0 +1,58 @@
+# NeyroRanks — prefixes in chat, above the head and in the tab list
+default: player
+show-default-prefix: false
+ranks:
+  director:
+    name: "Директор"
+    icon: "★"
+    color: "#2F6BFF"
+  admin:
+    name: "Админ"
+    icon: "⚡"
+    color: "#FF4A4A"
+  moderator:
+    name: "Модератор"
+    icon: "✔"
+    color: "#3CD070"
+  helper:
+    name: "Помощник"
+    icon: "✚"
+    color: "#4FD8FF"
+  vip:
+    name: "VIP"
+    icon: "◆"
+    color: "#FFB000"
+    city-resident: true
+  premium:
+    name: "PREMIUM"
+    icon: "✦"
+    color: "#FF8C42"
+    city-resident: true
+  elite:
+    name: "ELITE"
+    icon: "✧"
+    color: "#D685FF"
+    city-resident: true
+  titan:
+    name: "TITAN"
+    icon: "❖"
+    color: "#FF5555"
+    city-resident: true
+  researcher:
+    name: "Исследователь"
+    icon: "⚗"
+    color: "#55DFFF"
+  mercenary:
+    name: "Наёмник"
+    icon: "⚔"
+    color: "#C89470"
+  engineer:
+    name: "Инженер"
+    icon: "⚙"
+    color: "#A8CCEF"
+  player:
+    name: "Пилот"
+    icon: ""
+    color: "#AAAAAA"
+players:
+  rorinhungames: director

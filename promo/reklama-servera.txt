@@ -1,0 +1,133 @@
+РЕКЛАМА СЕРВЕРА NEYROCRAFT — тексты для мониторингов
+=====================================================
+
+Адрес:   neyrocraft.duckdns.org   (порт 25565, по умолчанию)
+Запасной адрес (IP): 95.31.249.117
+Версия:  26.3 (Paper)
+Вход:    пиратка и лицензия (вход по паролю на сервере)
+Слоты:   30
+Баннер:  banner-468x60.png · иконка: server-icon.png · фото: vk-avatar.png
+Обложка: vk-cover.png · трейлер: NeyroCraft-трейлер.mp4 (загрузи на YouTube и вставляй ссылку)
+
+
+--- 1. Короткое описание (одна строка, до 100 символов) ---
+
+NeyroCraft — космический хаб, 6 мини-игр, гонки на спидерах, StarPass. Пиратка, 26.3
+
+
+--- 2. Слоган ---
+
+Космический корабль NeyroCraft ждёт тебя на борту!
+
+
+--- 3. Полное описание ---
+
+🚀 NeyroCraft — сервер на космическом корабле
+
+Ты прибываешь на борт корабля NEYRO-1: тебя встречает ИИ корабля Саманта (с голосом!),
+а голограмма учёной Ами расскажет о станции и перенесёт тебя куда захочешь.
+
+🎮 РЕЖИМЫ
+• Выживание — классический survival с приватами: /rg auto — и дом под защитой, друзей добавишь в регион
+• SkyBlock — свой остров в небе
+• Лазертаг — командные бои на арене
+• Minecraft 1.0 — настоящий мир 2011 года: старые блоки, текстуры, звуки и тоже приваты
+• Световые мечи — дуэли на энергоклинках со способностями: толчок, молния, рывок, двойной прыжок
+• Гонки на спидерах — планета Терракс, трасса 1,5 км с тоннелем и трамплином, таймер и рекорды
+
+⭐ STARPASS — 30 уровней наград
+Звёзды за ежедневный вход, игру и победы. Титулы, цвета мечей, следы и предметы.
+
+🛰 ДВА ХАБА
+Главная палуба корабля и станция «Орион» в туманности: перелёт через гиперпространство.
+
+🛡 ЧЕСТНАЯ ИГРА
+Античит Grim + собственная защита NeyroGuard. Читы = бан.
+
+📊 ПАНЕЛЬ ИГРОКА
+Справа — твой ранг, титул, уровень StarPass, победы, убийства и время в каждом режиме.
+
+💻 МОЩНОЕ ЖЕЛЕЗО
+Ryzen 7 5700G · 64 ГБ RAM · RX 7800 XT 16 ГБ — низкий пинг и стабильный TPS.
+
+✅ Пиратка и лицензия · версия 26.3
+➡ Заходи: neyrocraft.duckdns.org
+
+
+--- 4. Теги / ключевые слова ---
+
+мини-игры, выживание, приваты, skyblock, лазертаг, гонки, pvp, космос, пиратка,
+starpass, ретро, minecraft 1.0, световые мечи, хаб, 26.3
+
+
+--- 5. Короткий пост для ВК / Telegram / Discord ---
+
+🚀 Открыт сервер NeyroCraft!
+Космический корабль с ИИ Самантой, станция «Орион», гонки на спидерах по планете Терракс,
+дуэли на световых мечах, лазертаг, SkyBlock, выживание и настоящий Minecraft 1.0.
+StarPass с наградами за каждый день игры.
+IP: neyrocraft.duckdns.org · версия 26.3 · пиратка ✅
+
+
+=====================================================
+ГДЕ РАЗМЕСТИТЬ (бесплатно добавить сервер)
+=====================================================
+Списки и условия на сайтах меняются — проверь перед регистрацией.
+Везде нужно: зарегистрироваться, «Добавить сервер», вставить адрес, тексты выше, баннер.
+Многие сайты просят подтвердить, что сервер твой: добавить их код в MOTD или зайти
+на сервер под ником — напиши мне этот код, я поставлю его в MOTD.
+
+Русские мониторинги:
+  • minecraftrating.ru
+  • monitoringminecraft.ru
+  • hotmc.ru
+  • topcraft.ru (TopCraft)
+  • mctop.su
+  • minecraft-statistic.net
+  • misterlauncher.org
+
+Международные (тексты нужны на английском — скажи, переведу):
+  • minecraft-server-list.com
+  • minecraftservers.org
+  • topg.org/minecraft-servers
+
+Сообщества:
+  • ВКонтакте: группы «сервера майнкрафт», «пиар серверов» (раздел предложенных записей)
+  • Telegram: каналы и чаты пиара серверов Minecraft
+  • Discord: серверы-каталоги Minecraft (каналы #ads / #реклама)
+  • Сделай свою группу ВК / Discord NeyroCraft — её ссылку просят почти все мониторинги
+
+Важно до рекламы:
+  • Порт 8165 (TCP) открыт — новые игроки получают голос Саманты, музыку,
+    текстуры мечей и спидеров. ✅
+  • Запусти server-power.ps1, чтобы ПК не засыпал — мониторинги снимают
+    сервер с рейтинга, если он часто офлайн.
+
+
+=====================================================
+ENGLISH — for international server lists
+=====================================================
+
+Short: NeyroCraft — space-ship hub, 6 mini-games, hover-bike races, StarPass. Cracked OK, 26.3
+
+🚀 NeyroCraft — a server aboard a starship
+Arrive on the starship NEYRO-1: the ship's AI Samantha greets you by voice, and the hologram
+scientist Ami beams you anywhere on the station.
+
+🎮 MODES
+• Survival with land claims (/rg auto) — add your friends to your region
+• SkyBlock — your own island in the sky
+• Laser Tag — team battles with blasters
+• Minecraft 1.0 — the real 2011 world: old blocks, textures and sounds (with claims too)
+• Energy Swords — duels with abilities: push, lightning, dash, double jump
+• Hover-bike Races — planet Terrax, a 1.5 km track with a tunnel and a jump, timer and records
+
+⭐ STARPASS — 30 reward levels for daily logins, playtime and wins
+🛰 Two hubs: the main deck and station "Orion", travel by warp jump
+🛡 Fair play: Grim anticheat + our own NeyroGuard
+💻 Ryzen 7 5700G · 64 GB RAM · RX 7800 XT — low ping, stable TPS
+
+✅ Cracked and premium · version 26.3 · Russian-speaking community
+➡ IP: neyrocraft.duckdns.org
+
+Tags: minigames, survival, claims, skyblock, lasertag, racing, pvp, space, cracked, retro

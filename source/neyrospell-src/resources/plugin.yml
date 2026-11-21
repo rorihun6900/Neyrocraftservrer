@@ -1,0 +1,12 @@
+name: NeyroSpell
+version: '1.0'
+main: net.neyrocraft.spell.NeyroSpell
+api-version: '26.3'
+description: Chat spell check for NeyroCraft (mistakes underlined, click to fix).
+author: NeyroCraft
+softdepend: [NeyroHub]
+commands:
+  spell:
+    description: Turn the spell check of your own messages on/off
+    aliases: [орфография]
+    usage: /spell
