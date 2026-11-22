@@ -47,7 +47,7 @@ final class HubMusic {
     }
 
     void start() {
-        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, PERIOD);
+        task = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1L, PERIOD);
     }
 
     void shutdown() {
@@ -79,6 +79,15 @@ final class HubMusic {
 
     void forget(Player p) {
         states.remove(p.getUniqueId());
+    }
+
+    /** Replays the soundtrack after a portal transfer or death, where the client stops long sounds. */
+    void refresh(Player p) {
+        State s = states.computeIfAbsent(p.getUniqueId(), k -> new State());
+        if (s.playing != null) stop(p);
+        s.nextStart = 0;
+        s.holdUntil = 0;
+        s.awaitUntil = 0;
     }
 
     private void tick() {

@@ -412,6 +412,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
         return vault;
     }
     private HubMusic music;
+    void refreshMusic(Player player) { if (music != null) music.refresh(player); }
 
     private void setupWorldRules(World w) {
         w.setDifficulty(Difficulty.PEACEFUL);

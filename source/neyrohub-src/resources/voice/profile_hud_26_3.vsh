@@ -50,11 +50,13 @@ void main() {
     int profileColor = rgb.b - 201;
     if (rgb.r == 9 && rgb.g == 109 && profileColor >= 0 && profileColor < 7) {
         // The client draws the action bar at (floor(width/2), height-68) with baseline offset -4.
-        float mid = floor(1.0 / abs(ProjMat[0][0]) + 0.001);
-        float bottom = round(2.0 / abs(ProjMat[1][1]));
+        // Projection dimensions are fractional, but the HUD rounds framebuffer dimensions up.
+        float width = ceil(2.0 / abs(ProjMat[0][0]) - 0.001);
+        float mid = floor(width * 0.5);
+        float bottom = ceil(2.0 / abs(ProjMat[1][1]) - 0.001);
         vec2 origin = vec2(mid, bottom - 68.0);
         vec2 local = position.xy - origin;
-        if (local.x >= -1.0 && local.x <= 144.0 && local.y >= -6.0 && local.y <= 42.0) {
+        if (local.x >= -1.0 && local.x <= 182.0 && local.y >= -6.0 && local.y <= 48.0) {
             position.xy = local + vec2(8.0, 12.0);
             gl_Position = ProjMat * position;
             vertexColor.rgb = PROFILE_COLORS[profileColor];

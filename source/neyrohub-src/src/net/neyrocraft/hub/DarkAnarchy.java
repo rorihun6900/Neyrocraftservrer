@@ -12,10 +12,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -36,6 +38,7 @@ final class DarkAnarchy implements Listener {
     private final JavaPlugin plugin;
     private final NamespacedKey darkKey;
     private final Set<UUID> pending = new HashSet<>();
+    private final Set<UUID> deaths = new HashSet<>();
     private World world;
     private World lobby;
     private World deadRealm;
@@ -477,6 +480,7 @@ final class DarkAnarchy implements Listener {
         Location arrival = world.getSpawnLocation().add(0.5, 0, 0.5);
         arrival.setYaw(0);
         if (!p.teleport(arrival)) return;
+        ((NeyroHub) plugin).refreshMusic(p);
         p.sendMessage(Component.text("Хранитель · Здесь Саманта бессильна. Она не видит вас и не слышит.", NamedTextColor.RED));
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             VoicePack voice = ((NeyroHub) plugin).voice();
@@ -490,6 +494,23 @@ final class DarkAnarchy implements Listener {
         p.displayName(Component.text(p.getName(), TextColor.color(0xFF3030)));
         p.sendTitle("§4ТЁМНАЯ СТОРОНА", "§cДобро пожаловать в анархию", 10, 60, 20);
         p.sendMessage(Component.text("Античит и правила основного мира здесь не меняются; анархия действует только в этом мире.", NamedTextColor.DARK_GRAY));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeath(PlayerDeathEvent event) {
+        if (event.getPlayer().getWorld().equals(world)) deaths.add(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        if (!deaths.remove(player.getUniqueId()) || world == null) return;
+        Location spawn = world.getSpawnLocation();
+        event.setRespawnLocation(new Location(world, spawn.getBlockX() + .5, spawn.getBlockY(),
+                spawn.getBlockZ() + .5, 0, 0));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (player.isOnline() && player.getWorld().equals(world)) ((NeyroHub) plugin).refreshMusic(player);
+        });
     }
 
     @EventHandler public void onNpc(PlayerInteractEntityEvent e) {
@@ -571,7 +592,10 @@ final class DarkAnarchy implements Listener {
         cancelCrossing(player, false);
     }
 
-    @EventHandler public void onQuit(PlayerQuitEvent e) { forgetGate(e.getPlayer()); }
+    @EventHandler public void onQuit(PlayerQuitEvent e) {
+        deaths.remove(e.getPlayer().getUniqueId());
+        forgetGate(e.getPlayer());
+    }
 
     @EventHandler public void onReturnFromDisconnect(org.bukkit.event.player.PlayerJoinEvent event) {
         Player player = event.getPlayer();

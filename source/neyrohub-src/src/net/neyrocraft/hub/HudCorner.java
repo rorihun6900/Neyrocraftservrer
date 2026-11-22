@@ -32,7 +32,7 @@ final class HudCorner {
     private static final String OVERLAY = "profile_hud_26_3";
     private static final String ASSETS = OVERLAY + "/assets/neyrocraft/";
     static final String SHADER = OVERLAY + "/assets/minecraft/shaders/core/text.vsh";
-    private static final int WIDTH = 142, HEIGHT = 39, GLYPH_WIDTH = 5, GLYPH_HEIGHT = 9;
+    private static final int WIDTH = 180, HEIGHT = 45, GLYPH_WIDTH = 8, GLYPH_HEIGHT = 12;
     private static final char MOVE = '\uE400', FRAME = '\uE500', DARK_FRAME = '\uE501';
     private static final int MARKER = 0x096dc9;
     private static final Key PANEL = Key.key("neyrocraft", "profile_card");
@@ -76,16 +76,16 @@ final class HudCorner {
     static Component render(Player player, Component rank, boolean dark) {
         TextComponent.Builder card = Component.text();
         row(card, PANEL, Character.toString(dark ? DARK_FRAME : FRAME), 0, WIDTH + 1, MARKER);
-        label(card, NAME, player.getName(), 33, 17, MARKER + 1);
+        label(card, NAME, player.getName(), 38, 16, MARKER + 1);
         String role = PlainTextComponentSerializer.plainText().serialize(rank)
                 .replaceAll("[^\\p{L}\\p{N} .:_-]", "").strip();
         if (role.isBlank()) role = player.isOp() ? "Администратор" : "Игрок";
-        label(card, RANK, "[" + role + "]", 33, 17, rankMarker(rank, dark));
+        label(card, RANK, "[" + role + "]", 38, 16, rankMarker(rank, dark));
         int need = Math.max(1, player.getExpToLevel());
         int xp = Math.round(player.getExp() * need);
-        label(card, XP, "XP " + xp + "/" + need, 36, 16, MARKER + 1);
+        label(card, XP, "XP  " + xp + " / " + need, 41, 15, MARKER + 1);
         String level = Integer.toString(Math.min(999, Math.max(0, player.getLevel())));
-        label(card, LEVEL, level, 17 - level.length() * 3, 3, MARKER + 4);
+        label(card, LEVEL, level, 18 - level.length() * 3, 3, MARKER + 4);
         return card.build();
     }
 
@@ -113,7 +113,13 @@ final class HudCorner {
             char c = text.charAt(i);
             safe.append(c == ' ' || LETTERS.indexOf(c) >= 0 ? c : '•');
         }
-        row(card, font, safe.toString(), x, safe.length() * (GLYPH_WIDTH + 1), marker);
+        row(card, font, safe.toString(), x, textAdvance(safe), marker);
+    }
+
+    private static int textAdvance(CharSequence text) {
+        int width = 0;
+        for (int i = 0; i < text.length(); i++) width += text.charAt(i) == ' ' ? 4 : GLYPH_WIDTH;
+        return width;
     }
 
     private static void row(TextComponent.Builder card, Key font, String text, int x, int advance, int marker) {
@@ -138,9 +144,9 @@ final class HudCorner {
         define(assets, "profile_card", bitmap("profile", 7, HEIGHT, Character.toString(FRAME))
                 + ',' + bitmap("profile_dark", 7, HEIGHT, Character.toString(DARK_FRAME)));
         textFont(assets, "profile_name", 5);
-        textFont(assets, "profile_rank", 15);
-        textFont(assets, "profile_xp", 26);
-        textFont(assets, "profile_level", 27);
+        textFont(assets, "profile_rank", 16);
+        textFont(assets, "profile_xp", 30);
+        textFont(assets, "profile_level", 31);
         try (var input = HudCorner.class.getResourceAsStream("/voice/profile_hud_26_3.vsh")) {
             if (input == null) throw new IOException("26.3 corner HUD shader missing");
             assets.put(SHADER, input.readAllBytes());
@@ -160,7 +166,7 @@ final class HudCorner {
 
     private static String spacing() {
         StringJoiner advances = new StringJoiner(",", "{\"type\":\"space\",\"advances\":{", "}}");
-        advances.add("\" \":" + (GLYPH_WIDTH + 1));
+        advances.add("\" \":4");
         for (int size = -160; size <= 40; size++) {
             advances.add("\"" + (char) (MOVE + size) + "\":" + size);
         }
@@ -185,13 +191,14 @@ final class HudCorner {
                     new Color(dark ? 0xc23050 : 0x2262ed)));
             g.drawPolygon(chamfer(2, 2, WIDTH - 5, HEIGHT - 5, 8));
             g.setColor(new Color(dark ? 0x331638 : 0x08101d));
-            g.fillPolygon(chamfer(5, 5, 25, 28, 4));
+            g.fillPolygon(chamfer(5, 4, 29, 33, 5));
             g.setColor(new Color(dark ? 0x884454 : 0x3265ac));
-            g.drawPolygon(chamfer(5, 5, 25, 28, 4));
-            g.drawImage(face, 8, 7, 18, 18, null);
-            g.setPaint(new GradientPaint(33, 29, new Color(dark ? 0x821b46 : 0x471d8c), 135, 29,
+            g.drawPolygon(chamfer(5, 4, 29, 33, 5));
+            // An exact 3x scale keeps both eyes on the same pixel grid.
+            g.drawImage(face, 7, 6, 24, 24, null);
+            g.setPaint(new GradientPaint(38, 33, new Color(dark ? 0x821b46 : 0x471d8c), 151, 33,
                     new Color(dark ? 0x321234 : 0x211b50)));
-            g.fillPolygon(chamfer(33, 27, 103, 9, 3));
+            g.fillPolygon(chamfer(38, 31, 113, 9, 3));
         } finally {
             g.dispose();
         }
@@ -208,13 +215,13 @@ final class HudCorner {
         BufferedImage atlas = new BufferedImage(LETTERS.length() * GLYPH_WIDTH, GLYPH_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = atlas.createGraphics();
         try {
-            g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 8));
+            g.setFont(new Font("Arial", Font.BOLD, 11));
             g.setColor(Color.WHITE);
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             for (int i = 0; i < LETTERS.length(); i++) {
                 int x = i * GLYPH_WIDTH;
                 g.setClip(x, 0, GLYPH_WIDTH, GLYPH_HEIGHT);
-                g.drawString(LETTERS.substring(i, i + 1), x, 7);
+                g.drawString(LETTERS.substring(i, i + 1), x, 10);
                 atlas.setRGB(x + GLYPH_WIDTH - 1, GLYPH_HEIGHT - 1, 0x01000000);
             }
         } finally {
