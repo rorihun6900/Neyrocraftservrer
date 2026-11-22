@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
@@ -73,6 +75,13 @@ final class NeyroChat implements Listener {
 
     private static TextColor accent(Player p) {
         return p.getWorld().getName().equals(DarkAnarchy.WORLD_NAME) ? RED : ICE;
+    }
+
+    static Component systemMessage(Component body) {
+        return Component.newline()
+                .append(Component.text("◇ СИСТЕМА", AMBER))
+                .append(Component.text("  │  ", STEEL))
+                .append(body);
     }
 
     private void menu(Player p) {
@@ -152,9 +161,13 @@ final class NeyroChat implements Listener {
         switch (mode) {
             case "local", "global", "group", "guild" -> {
                 channels.put(id, Channel.valueOf(mode.toUpperCase(java.util.Locale.ROOT)));
-                if (mode.equals("group")) p.sendMessage("Группа · /neyrochat invite ник · /neyrochat leave");
-                else if (mode.equals("guild")) p.sendMessage("Гильдия · /neyrochat guildinvite ник · /neyrochat guildleave");
-                else p.sendMessage(mode.equals("local") ? "Местный чат · текущий мир" : "Глобальный чат · весь сервер");
+                String description = switch (mode) {
+                    case "group" -> "Группа · /neyrochat invite ник · /neyrochat leave";
+                    case "guild" -> "Гильдия · /neyrochat guildinvite ник · /neyrochat guildleave";
+                    case "local" -> "Местный чат · текущий мир";
+                    default -> "Глобальный чат · весь сервер";
+                };
+                p.sendMessage(systemMessage(Component.text(description)));
             }
             case "guildinvite" -> {
                 Player target = args.length == 2 ? Bukkit.getPlayerExact(args[1]) : null;
@@ -227,7 +240,22 @@ final class NeyroChat implements Listener {
         }
     }
 
-    @EventHandler public void onQuit(PlayerQuitEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onJoin(PlayerJoinEvent event) {
+        Component message = event.joinMessage();
+        if (message != null && !message.equals(Component.empty())) event.joinMessage(systemMessage(message));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onDeath(PlayerDeathEvent event) {
+        Component message = event.deathMessage();
+        if (message != null && !message.equals(Component.empty())) event.deathMessage(systemMessage(message));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onQuit(PlayerQuitEvent event) {
+        Component message = event.quitMessage();
+        if (message != null && !message.equals(Component.empty())) event.quitMessage(systemMessage(message));
         UUID id = event.getPlayer().getUniqueId();
         channels.remove(id);
         groups.remove(id);

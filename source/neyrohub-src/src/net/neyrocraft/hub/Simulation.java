@@ -273,7 +273,7 @@ final class Simulation implements Listener {
         saveRestartFile();
         if (ok) {
             authed.add(p.getUniqueId());
-            p.sendMessage(Component.text("Сессия восстановлена после перезапуска. Добро пожаловать!", NamedTextColor.GREEN));
+            p.sendMessage(NeyroChat.systemMessage(Component.text("Сессия восстановлена после перезапуска. Добро пожаловать!", NamedTextColor.GREEN)));
         }
         return ok;
     }

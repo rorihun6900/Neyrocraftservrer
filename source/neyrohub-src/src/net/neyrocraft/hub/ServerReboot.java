@@ -69,7 +69,7 @@ final class ServerReboot implements Listener, CommandExecutor {
         for (Player p : Bukkit.getOnlinePlayers()) {
             VoicePack v = plugin.voice();
             if (v != null && v.hasVoice(p)) v.speak(p, line, len);
-            p.sendMessage(said);
+            p.sendMessage(NeyroChat.systemMessage(said));
             p.showTitle(Title.title(head, Component.text(restart ? "вернёмся через минуту" : "до скорой встречи", NamedTextColor.GRAY),
                     Title.Times.times(Duration.ofMillis(300), Duration.ofMillis(3500), Duration.ofMillis(800))));
             p.showBossBar(bar);
@@ -125,8 +125,8 @@ final class ServerReboot implements Listener, CommandExecutor {
             if (bar != null) p.hideBossBar(bar);
             VoicePack v = plugin.voice();
             if (v != null) v.silence(p);
-            p.sendMessage(Component.text("[Саманта] ", TextColor.color(BLUE)).decorate(TextDecoration.BOLD)
-                    .append(Component.text("Отбой! Перезапуск отменён, летим дальше.", NamedTextColor.WHITE).decoration(TextDecoration.BOLD, false)));
+            p.sendMessage(NeyroChat.systemMessage(Component.text("[Саманта] ", TextColor.color(BLUE)).decorate(TextDecoration.BOLD)
+                    .append(Component.text("Отбой! Перезапуск отменён, летим дальше.", NamedTextColor.WHITE).decoration(TextDecoration.BOLD, false))));
         }
     }
 

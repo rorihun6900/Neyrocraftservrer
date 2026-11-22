@@ -212,8 +212,11 @@ final class HudBoard implements Listener {
                 || noticeUntil.getOrDefault(player.getUniqueId(), 0L) > System.nanoTime()) return false;
         int level = player.getLevel();
         if (level > HudPortrait.MAX_LEVEL) return false;
-        player.sendActionBar(Component.text(HudPortrait.overlay(level, blink))
-                .font(net.kyori.adventure.key.Key.key("neyrocraft", "pilot_hud")));
+        Component panel = Component.text(HudPortrait.overlay(level, blink))
+                .font(net.kyori.adventure.key.Key.key("neyrocraft", "pilot_hud"));
+        if (HudCorner.supports(player)) panel = panel.append(HudCorner.render(player, rank(player),
+                mode == Mode.ANARCHY || mode == Mode.HUB3));
+        player.sendActionBar(panel);
         return true;
     }
 
@@ -308,11 +311,15 @@ final class HudBoard implements Listener {
         return t("◆ " + label, color).decorate(TextDecoration.BOLD);
     }
 
-    private List<Component> lines(Player p, Mode m) {
+    private Component rank(Player p) {
         Component rank = null;
         String rj = p.getPersistentDataContainer().get(rankKey, PersistentDataType.STRING);
         if (rj != null) try { rank = GsonComponentSerializer.gson().deserialize(rj); } catch (RuntimeException ignored) { }
-        if (rank == null) rank = t(p.isOp() ? "Администратор" : "Игрок", p.isOp() ? ORANGE : DIM);
+        return rank != null ? rank : t(p.isOp() ? "Администратор" : "Игрок", p.isOp() ? ORANGE : DIM);
+    }
+
+    private List<Component> lines(Player p, Mode m) {
+        Component rank = rank(p);
         int nextXp = Math.max(1, p.getExpToLevel());
         int experience = Math.round(p.getExp() * nextXp);
         Component name = portrait(p).append(t("  " + p.getName(), m == Mode.ANARCHY ? 0xFF6060 : 0xFFFFFF)

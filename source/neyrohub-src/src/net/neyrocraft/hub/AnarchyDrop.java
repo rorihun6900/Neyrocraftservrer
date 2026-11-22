@@ -101,7 +101,8 @@ final class AnarchyDrop {
     }
 
     private void announce(String message) {
-        for (var player : world.getPlayers()) player.sendMessage(Component.text(message, NamedTextColor.RED));
+        Component notice = NeyroChat.systemMessage(Component.text(message, NamedTextColor.RED));
+        for (var player : world.getPlayers()) player.sendMessage(notice);
     }
 
     void clear() {

@@ -611,6 +611,9 @@ final class VoicePack {
             ZipEntry e;
             while ((e = zin.getNextEntry()) != null) {
                 byte[] data = zin.readAllBytes();
+                if (e.getName().equals("pack.mcmeta") && portrait.containsKey(HudCorner.SHADER)) {
+                    data = HudCorner.metadata(data);
+                }
                 if (clip != null && e.getName().equals("assets/neyrocraft/sounds.json")) {
                     String json = new String(data, StandardCharsets.UTF_8).trim();
                     json = json.substring(0, json.lastIndexOf('}')) + ",\"name_" + clip.key() + "\":{\"sounds\":[{\"name\":\"neyrocraft:names/"

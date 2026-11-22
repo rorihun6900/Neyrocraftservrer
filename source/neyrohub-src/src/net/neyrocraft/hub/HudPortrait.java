@@ -1,5 +1,6 @@
 package net.neyrocraft.hub;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -20,6 +21,8 @@ final class HudPortrait {
     private static final String GLYPH_PATH = "assets/neyrocraft/textures/font/pilot_";
     private static final int HUD_ASCENT = 12;
     private static final int HUD_HEIGHT = 54;
+    private static final int CENTER_X = 20;
+    private static final int PORTRAIT_ADVANCE = 36;
     private static final char DIGIT = '\uE110';
     private static final char NEGATIVE_SPACE = '\uE130';
     // Larger native numbers extend beyond the badge and keep the normal vanilla rendering.
@@ -35,7 +38,7 @@ final class HudPortrait {
             {"providers":[
               {"type":"bitmap","file":"neyrocraft:font/pilot_open.png","ascent":%d,"height":%d,"chars":["\uE100"]},
               {"type":"bitmap","file":"neyrocraft:font/pilot_blink.png","ascent":%d,"height":%d,"chars":["\uE101"]},
-              {"type":"bitmap","file":"neyrocraft:font/pilot_digits.png","ascent":-32,"height":5,"chars":["%s"]},
+              {"type":"bitmap","file":"neyrocraft:font/pilot_digits.png","ascent":-30,"height":5,"chars":["%s"]},
               {"type":"space","advances":{"\uE102":-20,"\uE103":%d,%s}}
             ]}
             """;
@@ -93,13 +96,13 @@ final class HudPortrait {
 
         Map<String, byte[]> sprites = new LinkedHashMap<>();
         // Negative spaces center the drawing without causing an action-bar background to span it.
-        int advance = 31; // The level backing ends at x=29 followed by one pixel of advance.
         sprites.put("assets/neyrocraft/font/pilot_hud.json",
                 FONT.formatted(HUD_ASCENT, HUD_HEIGHT, HUD_ASCENT, HUD_HEIGHT,
-                                digitCharacters(DIGIT), 20 - advance, numberOffsets())
+                                digitCharacters(DIGIT), CENTER_X - PORTRAIT_ADVANCE, numberOffsets())
                         .getBytes(java.nio.charset.StandardCharsets.UTF_8));
         sprites.put(GLYPH_PATH + "digits.png", DIGITS);
         sprites.put(GLYPH_PATH + "open.png", card(face));
+        sprites.putAll(HudCorner.assets(face));
         // Close only the usual two eye bands. Keep hair and outer skin layers intact.
         for (int x : new int[]{1, 2, 5, 6}) {
             int skinTone = face.getRGB(x, 3);
@@ -152,10 +155,23 @@ final class HudPortrait {
         Graphics2D draw = image.createGraphics();
         try {
             draw.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-            draw.drawImage(face, 12, 21, 16, 16, null);
-            // Mask the original green level digits without touching the XP bar underneath.
-            draw.setColor(new java.awt.Color(0xff091426, true));
-            draw.fillRect(10, 41, 20, 7);
+            int[] outlineX = {12, 28, 34, 34, 28, 12, 6, 6};
+            int[] outlineY = {21, 21, 27, 34, 42, 42, 34, 27};
+            draw.setColor(new Color(0xff071527, true));
+            draw.fillPolygon(outlineX, outlineY, outlineX.length);
+            draw.setColor(new Color(0xff218ade, true));
+            draw.drawPolygon(outlineX, outlineY, outlineX.length);
+            draw.setColor(new Color(0xff7fdcff, true));
+            draw.drawPolyline(new int[]{9, 13, 27, 31}, new int[]{27, 22, 22, 27}, 4);
+            draw.drawImage(face, CENTER_X - 8, 24, 16, 16, null);
+
+            // The badge covers the vanilla level without covering the experience bar.
+            int[] badgeX = {12, 28, 31, 28, 12, 9};
+            int[] badgeY = {40, 40, 44, 48, 48, 44};
+            draw.setColor(new Color(0xff091426, true));
+            draw.fillPolygon(badgeX, badgeY, badgeX.length);
+            draw.setColor(new Color(0xff287fcb, true));
+            draw.drawPolygon(badgeX, badgeY, badgeX.length);
         } finally {
             draw.dispose();
         }
