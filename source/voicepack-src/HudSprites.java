@@ -13,15 +13,21 @@ final class HudSprites {
     private static final int WALL = 0xF40B192E;
     private static final int PANEL_TOP = 0xF50D1E36;
     private static final int PANEL_BOTTOM = 0xF9091326;
-    private static final int OUTER = 0xFF123349;
     private static final int EDGE = 0xFF215D7C;
     private static final int CIRCUIT = 0xFF2787A8;
     private static final int CYAN = 0xFF66DBEF;
     private static final int ICE = 0xFFC0F2FC;
     private static final int COPPER = 0xFF9A572B;
     private static final int AMBER = 0xFFFFB35A;
-    private static final int PALE_AMBER = 0xFFFFDC8E;
     private static final int CLEAR = 0x00000000;
+    private static final int ARC_GLASS = 0xEC071C35;
+    private static final int ARC_NAVY = 0xFF071124;
+    private static final int ARC_BLUE = 0xFF2365E7;
+    private static final int ARC_ELECTRIC = 0xFF237CFF;
+    private static final int ARC_LIT = 0xFF65D8FF;
+    private static final int ARC_WHITE = 0xFFF0FBFF;
+    private static final int ARC_GLOW = 0x642177FF;
+    private static final int ARC_DUSK = 0xFF0D315D;
 
     private HudSprites() {}
 
@@ -36,39 +42,40 @@ final class HudSprites {
         write(output, "experience_bar_background", experience(false));
         write(output, "experience_bar_progress", experience(true));
         write(output, "locator_bar_background", locator());
+        write(output, "portrait_frame", portraitFrame());
     }
 
     private static BufferedImage hotbar() {
         // Vanilla renders inventory slots at x = 3 + 20 × slot, y = 3.
         BufferedImage image = canvas(182, 22);
-        rect(image, 1, 0, 180, 21, WALL);
-        rect(image, 0, 2, 181, 19, WALL);
-        h(image, 4, 177, 0, EDGE);
-        h(image, 4, 177, 21, EDGE);
-        v(image, 0, 4, 17, OUTER);
-        v(image, 181, 4, 17, OUTER);
+        rect(image, 2, 0, 179, 21, ARC_NAVY);
+        rect(image, 0, 2, 181, 19, ARC_NAVY);
+        h(image, 3, 178, 0, ARC_LIT);
+        h(image, 3, 178, 21, ARC_ELECTRIC);
+        v(image, 0, 4, 17, ARC_BLUE);
+        v(image, 181, 4, 17, ARC_BLUE);
         for (int slot = 0; slot < 9; slot++) {
             int itemX = 3 + slot * 20;
             well(image, itemX, 3);
-            h(image, itemX + 3, itemX + 12, 0, slot == 4 ? AMBER : CYAN);
-            h(image, itemX + 6, itemX + 9, 21, slot == 4 ? COPPER : CIRCUIT);
+            h(image, itemX + 4, itemX + 11, 0, slot == 4 ? ARC_WHITE : ICE);
+            h(image, itemX + 4, itemX + 11, 21, ARC_LIT);
         }
-        image.setRGB(2, 1, ICE);
-        image.setRGB(179, 1, ICE);
-        image.setRGB(2, 20, CYAN);
-        image.setRGB(179, 20, CYAN);
+        image.setRGB(2, 1, ARC_WHITE);
+        image.setRGB(179, 1, ARC_WHITE);
+        image.setRGB(2, 20, ARC_LIT);
+        image.setRGB(179, 20, ARC_LIT);
         return image;
     }
 
     private static BufferedImage selection() {
         // Vanilla draws the selector at (20 × slot - 1, -1); keep the center transparent.
         BufferedImage image = canvas(24, 23);
-        clippedOutline(image, 0, 0, 23, 22, 3, COPPER);
-        clippedOutline(image, 1, 1, 22, 21, 2, AMBER);
-        h(image, 8, 15, 1, PALE_AMBER);
-        h(image, 10, 13, 21, PALE_AMBER);
-        v(image, 1, 6, 10, PALE_AMBER);
-        v(image, 22, 12, 16, PALE_AMBER);
+        clippedOutline(image, 0, 0, 23, 22, 3, ARC_ELECTRIC);
+        clippedOutline(image, 1, 1, 22, 21, 2, ARC_WHITE);
+        h(image, 8, 15, 1, ARC_WHITE);
+        h(image, 9, 14, 21, ICE);
+        v(image, 1, 6, 10, ARC_LIT);
+        v(image, 22, 12, 16, ARC_LIT);
         return image;
     }
 
@@ -76,7 +83,7 @@ final class HudSprites {
         // Off-hand uses different left/right padding, but the item baseline is identical.
         BufferedImage image = canvas(29, 24);
         rect(image, itemX - 2, 2, itemX + 17, 21, WALL);
-        clippedOutline(image, itemX - 3, 1, itemX + 18, 22, 2, EDGE);
+        clippedOutline(image, itemX - 3, 1, itemX + 18, 22, 2, ARC_ELECTRIC);
         well(image, itemX, 4);
         h(image, itemX + 3, itemX + 12, 1, CYAN);
         h(image, itemX + 6, itemX + 9, 22, CIRCUIT);
@@ -91,14 +98,44 @@ final class HudSprites {
         for (int y = itemY; y < itemY + 16; y++) {
             h(image, itemX, itemX + 15, y, lerp(PANEL_TOP, PANEL_BOTTOM, y - itemY, 15));
         }
-        clippedOutline(image, left, top, right, bottom, 2, EDGE);
-        h(image, left + 3, right - 3, top, CIRCUIT);
-        h(image, left + 2, left + 5, bottom, CYAN);
-        image.setRGB(right - 2, top + 1, OFF_GLOW);
-        image.setRGB(left + 1, bottom - 2, OFF_GLOW);
+        clippedOutline(image, left, top, right, bottom, 2, ARC_ELECTRIC);
+        clippedOutline(image, left + 1, top + 1, right - 1, bottom - 1, 1, ARC_DUSK);
+        h(image, left + 3, right - 3, top, ARC_LIT);
+        h(image, left + 3, right - 3, bottom, ARC_LIT);
+        v(image, left, top + 3, bottom - 2, ARC_LIT);
+        v(image, right, top + 3, bottom - 2, ARC_LIT);
+        image.setRGB(left + 3, top, ARC_WHITE);
+        image.setRGB(right - 3, top, ARC_WHITE);
+        image.setRGB(left + 3, bottom, ICE);
     }
 
-    private static final int OFF_GLOW = 0xFF254C60;
+    private static BufferedImage portraitFrame() {
+        // Atlas aperture at (8, 4): 24×24, for a threefold nearest-neighbor skin portrait.
+        BufferedImage image = canvas(40, 34);
+        for (int y = 0; y < 34; y++) {
+            int inset = y < 9 ? 10 - y : y < 24 ? 2 : Math.min(11, y - 22);
+            for (int x = inset - 1; x <= 40 - inset; x++) {
+                int bevel = Math.min(Math.min(x - inset, 39 - inset - x), Math.min(y, 33 - y));
+                int color = switch (bevel) {
+                    case -1 -> ARC_GLOW;
+                    case 0 -> ARC_ELECTRIC;
+                    case 1 -> ARC_WHITE;
+                    case 2 -> ARC_LIT;
+                    case 3 -> ARC_DUSK;
+                    default -> ARC_GLASS;
+                };
+                image.setRGB(x, y, color);
+            }
+        }
+        h(image, 13, 26, 0, ARC_LIT);
+        h(image, 11, 28, 1, ARC_WHITE);
+        h(image, 9, 30, 3, ARC_DUSK);
+        h(image, 9, 30, 28, ARC_DUSK);
+        v(image, 7, 9, 24, ARC_NAVY);
+        v(image, 32, 9, 24, ARC_NAVY);
+        rect(image, 8, 4, 31, 27, CLEAR);
+        return image;
+    }
 
     private static BufferedImage experience(boolean filled) {
         BufferedImage image = canvas(182, 5);

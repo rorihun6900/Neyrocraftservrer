@@ -1,0 +1,24 @@
+# These settings are re-read with /xaelira reload.
+name: "Ксей’Лира"
+subtitle: "Имперский научный офицер · тейлек"
+
+# Locations start at the former Ami platforms. Use /xaelira move or create to update them.
+stations:
+  main:
+    enabled: true
+  orion:
+    enabled: true
+
+# Optional custom text overrides are silent unless audio names an existing xaelira sound.
+# Keep an explicit audio override in sync with the text.
+lines: {}
+# lines:
+#   talk:
+#     text: "Мои датчики видят приближение корабля."
+
+# Add up to eight dialogue topics without compiling the plugin.
+topics: {}
+# topics:
+#   example:
+#     label: "Что изучают на станции?"
+#     text: "Мы наблюдаем за туманностью и отслеживаем порталы."

@@ -85,7 +85,7 @@ final class Dialogue implements Listener {
         final Speaker speaker;
         final Location focus;
         private TextDisplay panel;
-        private BukkitTask typing, timeout, hover;
+        private BukkitTask typing, timeout, hover, continuation;
         private final List<Option> options = new ArrayList<>();
         private final List<Entity> wheelBits = new ArrayList<>();
         private int hovered = -1;
@@ -118,34 +118,46 @@ final class Dialogue implements Listener {
             Player p = player;
             if (typing != null) typing.cancel();
             if (timeout != null) timeout.cancel();
+            if (continuation != null) continuation.cancel();
+            clearWheel(this);
             if (panel == null || !panel.isValid()) panel = spawnPanel(this);
             VoicePack voice = plugin.voice();
             boolean spoken = line.sound() != null && voice != null && voice.hasVoice(p);
-            if (spoken) voice.speak(p, Key.key("neyrocraft", line.sound()), line.seconds());
+            if (spoken) voice.speak(p, line.sound().contains(":") ? Key.key(line.sound()) : Key.key("neyrocraft", line.sound()), line.seconds());
             String text = line.text();
-            long totalTicks = spoken ? Math.round((line.seconds() - 0.5) * 20) : Math.max(20, Math.round(text.length() * 0.8));
-            double perTick = Math.max(1.0, text.length() / (double) Math.max(1, totalTicks));
-            final double[] shown = {0};
+            long totalTicks = spoken ? Math.max(1, (long) Math.ceil(line.seconds() * 20))
+                    : Math.max(20, Math.round(text.length() * 0.8));
+            final long[] elapsed = {0};
+            final int[] last = {-1};
             typing = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 if (!p.isOnline() || panel == null || !panel.isValid()) { end(false); return; }
-                shown[0] = Math.min(text.length(), shown[0] + perTick);
-                int n = (int) shown[0];
-                panel.text(panelText(speaker, text.substring(0, n), n < text.length()));
-                if (!spoken && n % 3 == 0 && n < text.length())
-                    p.playSound(Sound.sound(Key.key("minecraft", "block.note_block.hat"), Sound.Source.MASTER, 0.22f, 1.8f));
-                if (n >= text.length()) {
+                int n = (int) Math.min(text.length(), (++elapsed[0] * text.length()) / totalTicks);
+                if (n != last[0]) {
+                    last[0] = n;
+                    panel.text(panelText(speaker, text.substring(0, n), n < text.length()));
+                    if (!spoken && n % 3 == 0 && n < text.length())
+                        p.playSound(Sound.sound(Key.key("minecraft", "block.note_block.hat"), Sound.Source.MASTER, 0.22f, 1.8f));
+                }
+                if (elapsed[0] >= totalTicks) {
                     typing.cancel();
                     typing = null;
-                    long pause = spoken ? 14L : Math.min(50L, 16L + text.length() / 6);
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> { if (active() && after != null) after.run(); }, pause);
+                    long pause = spoken ? 5L : Math.min(50L, 16L + text.length() / 6);
+                    continuation = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        continuation = null;
+                        if (active() && after != null) after.run();
+                    }, pause);
                 }
             }, 1L, 1L);
         }
 
         /** Shows the wheel with these answers (numbered in this order: keys 1..n). */
         void choose(List<Choice> choices) {
+            choose(choices, null);
+        }
+
+        void choose(List<Choice> choices, Runnable idle) {
             if (!active()) return;
-            showWheel(this, choices);
+            showWheel(this, choices, idle);
         }
 
         void choose(Choice... choices) { choose(List.of(choices)); }
@@ -275,7 +287,7 @@ final class Dialogue implements Listener {
         return a;
     }
 
-    private void showWheel(Session s, List<Choice> choices) {
+    private void showWheel(Session s, List<Choice> choices, Runnable idle) {
         Player p = s.player;
         World w = p.getWorld();
         clearWheel(s);
@@ -318,7 +330,11 @@ final class Dialogue implements Listener {
                 .append(Component.text(" · ", NamedTextColor.DARK_GRAY))
                 .append(Component.text("◆ Тьма", TextColor.color(Kind.DARK.color)))
                 .append(Component.text(" · Shift — уйти", NamedTextColor.GRAY)).build());
-        s.timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> { if (s.active()) finish(s, true); }, 20L * 45);
+        s.timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!s.active()) return;
+            if (idle != null) idle.run();
+            else finish(s, true);
+        }, 20L * (idle == null ? 45 : 20));
     }
 
     private TextDisplay wheelText(Player p, Location at, Component text, float scale, Color bg) {
@@ -433,6 +449,7 @@ final class Dialogue implements Listener {
         s.over = true;
         sessions.remove(s.player.getUniqueId(), s);
         if (s.typing != null) s.typing.cancel();
+        if (s.continuation != null) s.continuation.cancel();
         if (s.timeout != null) s.timeout.cancel();
         if (s.panel != null && s.panel.isValid()) s.panel.remove();
         clearWheel(s);

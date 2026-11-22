@@ -920,7 +920,7 @@ public final class NeyroHub extends JavaPlugin implements Listener {
                 .append(Component.text("\nГлавная палуба · /hub\n\nВыживание — оранжевый портал. Строить и ломать можно за пределами 500 блоков по горизонтали от спавна.\n\nСкайблок — бирюзовый портал.\nАнархия — алые врата.\n\nОрион и арены → стр. 2", NamedTextColor.BLACK)
                         .decoration(TextDecoration.BOLD, false));
         var second = Component.text("✦ СТАНЦИЯ «ОРИОН»\n", NamedTextColor.DARK_BLUE).decorate(TextDecoration.BOLD)
-                .append(Component.text("Лети через /hub2 или /orion. На главной палубе также можно попросить Ами.\n\n", NamedTextColor.BLACK)
+                .append(Component.text("Лети через /hub2 или /orion. На главной палубе также можно попросить Ксей’Лиру.\n\n", NamedTextColor.BLACK)
                         .decoration(TextDecoration.BOLD, false))
                 .append(Component.text("Лазертаг — фиолетовый портал в /hub.\n", NamedTextColor.BLACK).decoration(TextDecoration.BOLD, false))
                 .append(bookLink("/sabers", "Бои на мечах"))
@@ -2010,6 +2010,24 @@ public final class NeyroHub extends JavaPlugin implements Listener {
         if (cmd.equals("hubinfo")) {
             if (sender instanceof Player p) openHubInfo(p);
             else sender.sendMessage("/hubinfo доступна в игре.");
+            return true;
+        }
+        if (cmd.equals("xaelira")) {
+            if (!sender.hasPermission("neyrohub.admin") || sender instanceof Player p && !authed(p)) return true;
+            Ami second = orion == null ? null : orion.ami();
+            String action = args.length == 0 ? "" : args[0].toLowerCase(java.util.Locale.ROOT);
+            if (args.length == 1 && action.equals("reload")) {
+                if (mainAmi != null) mainAmi.configure(sender, action);
+                if (second != null) second.configure(sender, action);
+                sender.sendMessage("Ксей’Лира · настройки перечитаны.");
+                return true;
+            }
+            if (args.length == 2 && (args[1].equalsIgnoreCase("main") || args[1].equalsIgnoreCase("orion"))) {
+                Ami target = args[1].equalsIgnoreCase("orion") ? second : mainAmi;
+                if (target != null && (!List.of("create", "move").contains(action) || sender instanceof Player p && inHub(p))
+                        && target.configure(sender, action)) return true;
+            }
+            sender.sendMessage("/xaelira reload | /xaelira <create|move|remove> <main|orion>");
             return true;
         }
         if (cmd.equals("anarchydrop")) {

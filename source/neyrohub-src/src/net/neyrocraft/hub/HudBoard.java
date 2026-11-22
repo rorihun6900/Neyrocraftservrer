@@ -178,7 +178,12 @@ final class HudBoard implements Listener {
                         : java.util.Set.of());
                 render(p, mine, m);
                 if (cur != mine) p.setScoreboard(mine);
-                renderPortrait(p, m);
+                boolean blink = tick % 8 == Math.floorMod(p.getUniqueId().hashCode(), 8);
+                if (renderPortrait(p, m, blink) && blink) {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        if (p.isOnline() && mode(p) == m) renderPortrait(p, m, false);
+                    }, 3L);
+                }
             } catch (RuntimeException ex) {
                 plugin.getLogger().warning("HUD for " + p.getName() + ": " + ex);
             }
@@ -199,15 +204,17 @@ final class HudBoard implements Listener {
         return Component.object(head);
     }
 
-    private void renderPortrait(Player player, Mode mode) {
-        if (mode == Mode.RETRO || mode == Mode.RACE || mode == Mode.CINEMA || mode == Mode.OTHER) return;
+    private boolean renderPortrait(Player player, Mode mode, boolean blink) {
+        if (mode == Mode.RETRO || mode == Mode.RACE || mode == Mode.CINEMA || mode == Mode.OTHER) return false;
+        if (plugin.voice() == null || !plugin.voice().hasPortrait(player)) return false;
         if (plugin.inCutscene(player) || plugin.dialogue().talking(player)
                 || player.isDead() || player.getOpenInventory().getTopInventory().getType() != org.bukkit.event.inventory.InventoryType.CRAFTING
-                || noticeUntil.getOrDefault(player.getUniqueId(), 0L) > System.nanoTime()) return;
-        int accent = mode == Mode.ANARCHY || mode == Mode.HUB3 ? 0xE64B65 : CYAN;
-        player.sendActionBar(t("⟪ ", accent).append(portrait(player))
-                .append(t("  ·  УР. " + player.getLevel() + " ", GOLD))
-                .append(t("⟫", accent)));
+                || noticeUntil.getOrDefault(player.getUniqueId(), 0L) > System.nanoTime()) return false;
+        int level = player.getLevel();
+        if (level > HudPortrait.MAX_LEVEL) return false;
+        player.sendActionBar(Component.text(HudPortrait.overlay(level, blink))
+                .font(net.kyori.adventure.key.Key.key("neyrocraft", "pilot_hud")));
+        return true;
     }
 
 

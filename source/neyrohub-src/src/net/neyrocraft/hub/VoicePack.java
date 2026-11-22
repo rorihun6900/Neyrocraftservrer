@@ -67,6 +67,7 @@ final class VoicePack {
     private final Map<UUID, String> loadedKey = new ConcurrentHashMap<>();     // which pack the client has
     private final Map<String, Pack> packs = new ConcurrentHashMap<>();         // "base" or name key
     private final Map<String, NameClip> clips = new ConcurrentHashMap<>();
+    private final Set<String> portraitPacks = ConcurrentHashMap.newKeySet();
     private final Set<UUID> offered = ConcurrentHashMap.newKeySet();
     private final ExecutorService synth = Executors.newSingleThreadExecutor(r -> { Thread t = new Thread(r, "Samantha-Voice"); t.setDaemon(true); return t; });
     private HttpServer http;
@@ -110,6 +111,11 @@ final class VoicePack {
                 base = addHudTextures(base);
             } catch (IOException ex) {
                 plugin.getLogger().warning("HUD textures unavailable: " + ex.getMessage());
+            }
+            try {
+                base = addXaeAudio(base);
+            } catch (IOException ex) {
+                plugin.getLogger().warning("Xae'Lira voice unavailable: " + ex.getMessage());
             }
             packs.put("base", new Pack(base, sha1(base)));
             try {
@@ -173,6 +179,7 @@ final class VoicePack {
         if (hostFor(p) == null) return;
         String name = p.getName();
         UUID id = p.getUniqueId();
+        String skinId = HudPortrait.textureId(p.getPlayerProfile().getTextures().getSkin());
         long started = System.currentTimeMillis();
         synth.submit(() -> {
             NameClip clip = null;
@@ -180,8 +187,20 @@ final class VoicePack {
                 plugin.getLogger().warning("Samantha could not record the name " + name + ": " + e.getMessage());
             }
             String key = clip == null ? "base" : clip.key();
+            if (skinId != null) {
+                String personalKey = key + "-" + skinId;
+                if (!portraitPacks.contains(personalKey)) {
+                    try {
+                        packs.put(personalKey, buildPlayerPack(clip, HudPortrait.fetch(skinId)));
+                        portraitPacks.add(personalKey);
+                    } catch (IOException ex) {
+                        plugin.getLogger().fine("HUD portrait unavailable: " + ex.getMessage());
+                    }
+                }
+                if (portraitPacks.contains(personalKey)) key = personalKey;
+            }
             if (clip != null && !packs.containsKey(key)) {
-                try { packs.put(key, buildPlayerPack(clip)); } catch (IOException e) { key = "base"; }
+                try { packs.put(key, buildPlayerPack(clip, Map.of())); } catch (IOException e) { key = "base"; }
             }
             final String k = key;
             long wait = Math.max(0, 1000 - (System.currentTimeMillis() - started));
@@ -268,6 +287,34 @@ final class VoicePack {
                 zip.write(texture.getValue());
                 zip.closeEntry();
             }
+        }
+        return output.toByteArray();
+    }
+
+    private byte[] addXaeAudio(byte[] base) throws IOException {
+        var clips = XaeLines.load(plugin);
+        if (clips.isEmpty()) return base;
+        var sounds = new java.util.StringJoiner(",", "{", "}");
+        ByteArrayOutputStream output = new ByteArrayOutputStream(base.length + 384_000);
+        try (ZipInputStream input = new ZipInputStream(new ByteArrayInputStream(base));
+             ZipOutputStream zip = new ZipOutputStream(output)) {
+            for (ZipEntry entry; (entry = input.getNextEntry()) != null; ) {
+                putTemplePackEntry(zip, entry.getName());
+                input.transferTo(zip);
+                zip.closeEntry();
+            }
+            for (String id : clips.keySet()) {
+                try (var clip = plugin.getResource("voice/xae/" + id + ".ogg")) {
+                    if (clip == null) continue;
+                    putTemplePackEntry(zip, "assets/xaelira/sounds/" + id + ".ogg");
+                    clip.transferTo(zip);
+                    zip.closeEntry();
+                    sounds.add("\"" + id + "\":{\"sounds\":[{\"name\":\"xaelira:" + id + "\",\"stream\":true}]}");
+                }
+            }
+            putTemplePackEntry(zip, "assets/xaelira/sounds.json");
+            zip.write(sounds.toString().getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
         }
         return output.toByteArray();
     }
@@ -424,7 +471,7 @@ final class VoicePack {
                 .packs(info)
                 .required(false)
                 .replace(false)
-                .prompt(Component.text("Интерфейс, голоса Саманты и Ами, музыка и модели NeyroCraft", TextColor.color(0xFF8A1E)))
+                .prompt(Component.text("Интерфейс, голоса Саманты и Ксей’Лиры, музыка и модели NeyroCraft", TextColor.color(0xFF8A1E)))
                 .callback((pid, status, audience) -> {
                     if (status == ResourcePackStatus.SUCCESSFULLY_LOADED) loadedKey.put(p.getUniqueId(), key);
                     else if (!status.intermediate()) loadedKey.remove(p.getUniqueId());
@@ -488,6 +535,11 @@ final class VoicePack {
         return loadedKey.containsKey(p.getUniqueId());
     }
 
+    boolean hasPortrait(Player player) {
+        String key = loadedKey.get(player.getUniqueId());
+        return key != null && portraitPacks.contains(key);
+    }
+
     void forget(Player p) {
         loadedKey.remove(p.getUniqueId());
         offered.remove(p.getUniqueId());
@@ -500,7 +552,7 @@ final class VoicePack {
     long playWelcome(Player p) {
         String key = loadedKey.get(p.getUniqueId());
         if (key == null) return -1;
-        NameClip clip = key.equals("base") ? null : clips.get(key);
+        NameClip clip = clips.get(key.split("-", 2)[0]);
         double nameAt = A_SPEECH, bAt = A_SPEECH + (clip != null ? Math.max(0.4, clip.seconds() - TAIL) : 0.3);
         double total = bAt + B_LENGTH;
         // only this player hears it, and nothing else talks over it
@@ -551,7 +603,7 @@ final class VoicePack {
         return new String(out, StandardCharsets.UTF_8);
     }
 
-    private Pack buildPlayerPack(NameClip clip) throws IOException {
+    private Pack buildPlayerPack(NameClip clip, Map<String, byte[]> portrait) throws IOException {
         byte[] base = packs.get("base").zip();
         ByteArrayOutputStream bos = new ByteArrayOutputStream(base.length + 64_000);
         try (ZipInputStream zin = new ZipInputStream(new java.io.ByteArrayInputStream(base));
@@ -559,7 +611,7 @@ final class VoicePack {
             ZipEntry e;
             while ((e = zin.getNextEntry()) != null) {
                 byte[] data = zin.readAllBytes();
-                if (e.getName().equals("assets/neyrocraft/sounds.json")) {
+                if (clip != null && e.getName().equals("assets/neyrocraft/sounds.json")) {
                     String json = new String(data, StandardCharsets.UTF_8).trim();
                     json = json.substring(0, json.lastIndexOf('}')) + ",\"name_" + clip.key() + "\":{\"sounds\":[{\"name\":\"neyrocraft:names/"
                             + clip.key() + "\",\"stream\":true}],\"subtitle\":\"Саманта говорит\"}}";
@@ -569,9 +621,16 @@ final class VoicePack {
                 zout.write(data);
                 zout.closeEntry();
             }
-            zout.putNextEntry(new ZipEntry("assets/neyrocraft/sounds/names/" + clip.key() + ".ogg"));
-            zout.write(Files.readAllBytes(new File(namesDir, clip.key() + ".ogg").toPath()));
-            zout.closeEntry();
+            if (clip != null) {
+                putTemplePackEntry(zout, "assets/neyrocraft/sounds/names/" + clip.key() + ".ogg");
+                zout.write(Files.readAllBytes(new File(namesDir, clip.key() + ".ogg").toPath()));
+                zout.closeEntry();
+            }
+            for (var asset : portrait.entrySet()) {
+                putTemplePackEntry(zout, asset.getKey());
+                zout.write(asset.getValue());
+                zout.closeEntry();
+            }
         }
         byte[] zip = bos.toByteArray();
         return new Pack(zip, sha1(zip));

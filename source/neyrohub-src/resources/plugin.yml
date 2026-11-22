@@ -28,6 +28,10 @@ commands:
   hubinfo:
     description: Путеводитель по мирам и мини-играм
     usage: /hubinfo
+  xaelira:
+    description: Управление голограммой Ксей'Лиры
+    permission: neyrohub.admin
+    usage: /xaelira reload
   hub3:
     description: Open the red dark-side anarchy portal
     usage: /hub3
